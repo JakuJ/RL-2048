@@ -1,23 +1,44 @@
 <template>
   <div>
-    <h1 class="title">Play 2048</h1>
-    <board-view ref="boardView"></board-view>
-    <button class="defaultButton" @click="botMode">Let bot play</button>
+    <h1 class="title centered">Play 2048</h1>
+    <p class="centered">Score: {{ score }}</p>
+    <board-view ref="boardView" v-on:boardUpdated="updateScore"></board-view>
+    <button class="defaultButton centered botButton" @click="botMode">Let the bot play</button>
   </div>
 </template>
 
 <script>
 import BoardView from "./BoardView.vue";
 export default {
+  data() {
+    return {
+      score: 0
+    };
+  },
   components: { BoardView },
   methods: {
     botMode() {
       this.$refs.boardView.deregisterCallbacks();
       // TODO: Tutaj podpiąć bota
+    },
+    updateScore() {
+      this.score = this.$refs.boardView.board.score;
     }
   }
 };
 </script>
 
 <style scoped>
+.title {
+  font-family: "Clear Sans";
+}
+
+.centered {
+  display: block;
+  margin: 10px auto;
+  text-align: center;
+}
+.botButton{
+  margin-top: 20px;
+}
 </style>

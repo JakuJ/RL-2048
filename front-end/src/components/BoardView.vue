@@ -46,6 +46,7 @@ export default {
         event.preventDefault();
         var direction = event.keyCode - 37;
         this.board.move(direction);
+        this.$emit('boardUpdated');
       }
     },
     onRestart() {
