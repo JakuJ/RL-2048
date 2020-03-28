@@ -1,182 +1,203 @@
-var rotateLeft = function (matrix) {
-    var rows = matrix.length;
-    var columns = matrix[0].length;
-    var res = [];
-    for (var row = 0; row < rows; ++row) {
-        res.push([]);
-        for (var column = 0; column < columns; ++column) {
+function rotateLeft(matrix) {
+    const rows = matrix.length;
+    const columns = matrix[0].length;
+    const res = [...Array(rows)].map(_ => Array(columns));
+
+    for (let row = 0; row < rows; row++) {
+        for (let column = 0; column < columns; column++) {
             res[row][column] = matrix[column][columns - row - 1];
         }
     }
     return res;
 };
 
-var Tile = function (value, row, column) {
-    this.value = value || 0;
-    this.row = row || -1;
-    this.column = column || -1;
-    this.oldRow = -1;
-    this.oldColumn = -1;
-    this.markForDeletion = false;
-    this.mergedInto = null;
-    this.id = Tile.id++;
-};
+class Tile {
+    static uniqueID = 0;
 
-Tile.id = 0;
+    constructor(value = 0, row = -1, column = -1) {
+        this.id = Tile.uniqueID++;
 
-Tile.prototype.moveTo = function (row, column) {
-    this.oldRow = this.row;
-    this.oldColumn = this.column;
-    this.row = row;
-    this.column = column;
-};
+        this.value = value;
+        this.row = row;
+        this.column = column;
 
-Tile.prototype.isNew = function () {
-    return this.oldRow == -1 && !this.mergedInto;
-};
-
-Tile.prototype.hasMoved = function () {
-    return (this.fromRow() != -1 && (this.fromRow() != this.toRow() || this.fromColumn() != this.toColumn())) ||
-        this.mergedInto;
-};
-
-Tile.prototype.fromRow = function () {
-    return this.mergedInto ? this.row : this.oldRow;
-};
-
-Tile.prototype.fromColumn = function () {
-    return this.mergedInto ? this.column : this.oldColumn;
-};
-
-Tile.prototype.toRow = function () {
-    return this.mergedInto ? this.mergedInto.row : this.row;
-};
-
-Tile.prototype.toColumn = function () {
-    return this.mergedInto ? this.mergedInto.column : this.column;
-};
-
-var Board = function () {
-    this.tiles = [];
-    this.cells = [];
-    for (var i = 0; i < Board.size; ++i) {
-        this.cells[i] = [this.addTile(), this.addTile(), this.addTile(), this.addTile()];
+        this.oldRow = -1;
+        this.oldColumn = -1;
+        this.markForDeletion = false;
+        this.mergedInto = null;
     }
-    this.addRandomTile();
-    this.setPositions();
-    this.won = false;
-    this.score = 0;
-};
 
-Board.prototype.addTile = function () {
-    var res = new Tile;
-    Tile.apply(res, arguments);
-    this.tiles.push(res);
-    return res;
-};
-
-Board.size = 4;
-
-Board.prototype.moveLeft = function () {
-
-    var hasChanged = false;
-    for (var row = 0; row < Board.size; ++row) {
-        var currentRow = this.cells[row].filter(tile => tile.value != 0);
-        var resultRow = [];
-        for (var target = 0; target < Board.size; ++target) {
-            var targetTile = currentRow.length ? currentRow.shift() : this.addTile();
-            if (currentRow.length > 0 && currentRow[0].value == targetTile.value) {
-                var tile1 = targetTile;
-                targetTile = this.addTile(targetTile.value);
-                tile1.mergedInto = targetTile;
-                var tile2 = currentRow.shift();
-                tile2.mergedInto = targetTile;
-                targetTile.value += tile2.value;
-                this.score +=targetTile.value;
-            }
-            resultRow[target] = targetTile;
-            this.won |= (targetTile.value == 2048);
-            hasChanged |= (targetTile.value != this.cells[row][target].value);
-        }
-        this.cells[row] = resultRow;
+    moveTo(row, column) {
+        this.oldRow = this.row;
+        this.oldColumn = this.column;
+        this.row = row;
+        this.column = column;
     }
-    return hasChanged;
-};
 
-Board.prototype.setPositions = function () {
-    this.cells.forEach((row, rowIndex) => {
-        row.forEach((tile, columnIndex) => {
-            tile.oldRow = tile.row;
-            tile.oldColumn = tile.column;
-            tile.row = rowIndex;
-            tile.column = columnIndex;
-            tile.markForDeletion = false;
-        });
-    });
-};
+    isNew() {
+        return this.oldRow == -1 && !this.mergedInto;
+    }
 
-Board.fourProbability = 0.1;
+    hasMoved() {
+        return (this.fromRow() != -1 && (this.fromRow() != this.toRow() || this.fromColumn() != this.toColumn())) || this.mergedInto;
+    }
 
-Board.prototype.addRandomTile = function () {
-    var emptyCells = [];
-    for (var r = 0; r < Board.size; ++r) {
-        for (var c = 0; c < Board.size; ++c) {
-            if (this.cells[r][c].value == 0) {
-                emptyCells.push({ r: r, c: c });
+    fromRow() {
+        return this.mergedInto ? this.row : this.oldRow;
+    }
+
+    fromColumn() {
+        return this.mergedInto ? this.column : this.oldColumn;
+    }
+
+    toRow() {
+        return this.mergedInto ? this.mergedInto.row : this.row;
+    }
+
+    toColumn() {
+        return this.mergedInto ? this.mergedInto.column : this.column;
+    }
+}
+
+class Board {
+    constructor() {
+        this.won = false;
+        this.score = 0;
+        this.size = 4;
+        this.fourProbability = 0.1;
+
+        this.tiles = [];
+        this.cells = [];
+
+        for (let i = 0; i < this.size; i++) {
+            this.cells[i] = [];
+            for (let j = 0; j < this.size; j++) {
+                this.cells[i][j] = this.addTile();
             }
         }
-    }
-    var index = ~~(Math.random() * emptyCells.length);
-    var cell = emptyCells[index];
-    var newValue = Math.random() < Board.fourProbability ? 4 : 2;
-    this.cells[cell.r][cell.c] = this.addTile(newValue);
-};
 
-Board.prototype.move = function (direction) {
-    // 0 -> left, 1 -> up, 2 -> right, 3 -> down
-    this.clearOldTiles();
-    for (var i = 0; i < direction; ++i) {
-        this.cells = rotateLeft(this.cells);
-    }
-    var hasChanged = this.moveLeft();
-    for (var i = direction; i < 4; ++i) {
-        this.cells = rotateLeft(this.cells);
-    }
-    if (hasChanged) {
         this.addRandomTile();
+        this.setPositions();
     }
-    this.setPositions();
-    return this;
-};
 
-Board.prototype.clearOldTiles = function () {
-    this.tiles = this.tiles.filter(tile => tile.markForDeletion == false);
-    this.tiles.forEach(tile => { tile.markForDeletion = true; });
-};
+    addTile(value = 0) {
+        const res = new Tile(value);
+        this.tiles.push(res);
+        return res;
+    }
 
-Board.prototype.hasWon = function () {
-    return this.won;
-};
+    moveLeft() {
+        let hasChanged = false;
+        for (let row = 0; row < this.size; ++row) {
+            const currentRow = this.cells[row].filter(tile => tile.value != 0);
+            const resultRow = [];
 
-Board.deltaX = [-1, 0, 1, 0];
-Board.deltaY = [0, -1, 0, 1];
+            for (let target = 0; target < this.size; ++target) {
+                let targetTile = currentRow.length ? currentRow.shift() : this.addTile();
 
-Board.prototype.hasLost = function () {
-    var canMove = false;
-    for (var row = 0; row < Board.size; ++row) {
-        for (var column = 0; column < Board.size; ++column) {
-            canMove |= (this.cells[row][column].value == 0);
-            for (var dir = 0; dir < 4; ++dir) {
-                var newRow = row + Board.deltaX[dir];
-                var newColumn = column + Board.deltaY[dir];
-                if (newRow < 0 || newRow >= Board.size || newColumn < 0 || newColumn >= Board.size) {
-                    continue;
+                if (currentRow.length > 0 && currentRow[0].value == targetTile.value) {
+                    const tile1 = targetTile;
+                    targetTile = this.addTile(targetTile.value);
+                    tile1.mergedInto = targetTile;
+
+                    const tile2 = currentRow.shift();
+                    tile2.mergedInto = targetTile;
+                    targetTile.value += tile2.value;
+
+                    this.score += targetTile.value;
                 }
-                canMove |= (this.cells[row][column].value == this.cells[newRow][newColumn].value);
+
+                resultRow[target] = targetTile;
+                this.won |= (targetTile.value == 2048);
+                hasChanged |= (targetTile.value != this.cells[row][target].value);
+            }
+            this.cells[row] = resultRow;
+        }
+        return hasChanged;
+    }
+
+    setPositions() {
+        this.cells.forEach((row, rowIndex) => {
+            row.forEach((tile, columnIndex) => {
+                tile.oldRow = tile.row;
+                tile.oldColumn = tile.column;
+                tile.row = rowIndex;
+                tile.column = columnIndex;
+                tile.markForDeletion = false;
+            });
+        });
+    }
+
+    addRandomTile() {
+        const emptyCells = [];
+        for (let r = 0; r < this.size; r++) {
+            for (let c = 0; c < this.size; c++) {
+                if (this.cells[r][c].value == 0) {
+                    emptyCells.push({ r, c });
+                }
             }
         }
+
+        const index = Math.floor(Math.random() * emptyCells.length);
+        const { r, c } = emptyCells[index];
+        const newValue = Math.random() < this.fourProbability ? 4 : 2;
+
+        this.cells[r][c] = this.addTile(newValue);
     }
-    return !canMove;
-};
+
+    move(direction) {
+        // 0 -> left, 1 -> up, 2 -> right, 3 -> down
+        this.clearOldTiles();
+
+        for (let i = 0; i < direction; i++) {
+            this.cells = rotateLeft(this.cells);
+        }
+
+        const hasChanged = this.moveLeft();
+
+        for (let i = direction; i < 4; i++) {
+            this.cells = rotateLeft(this.cells);
+        }
+
+        if (hasChanged) {
+            this.addRandomTile();
+        }
+
+        this.setPositions();
+    }
+
+    clearOldTiles() {
+        this.tiles = this.tiles.filter(tile => !tile.markForDeletion);
+        this.tiles.forEach(tile => { tile.markForDeletion = true; });
+    }
+
+    hasWon() {
+        return this.won;
+    }
+
+    hasLost() {
+        let canMove = false;
+        const deltaX = [-1, 0, 1, 0];
+        const deltaY = [0, -1, 0, 1];
+
+        for (let row = 0; row < this.size; row++) {
+            for (let column = 0; column < this.size; column++) {
+                canMove |= (this.cells[row][column].value == 0);
+
+                for (let dir = 0; dir < 4; dir++) {
+                    const newRow = row + deltaX[dir];
+                    const newColumn = column + deltaY[dir];
+
+                    if (newRow < 0 || newRow >= this.size || newColumn < 0 || newColumn >= this.size) {
+                        continue;
+                    }
+
+                    canMove |= (this.cells[row][column].value == this.cells[newRow][newColumn].value);
+                }
+            }
+        }
+        return !canMove;
+    }
+}
 
 export { Board }

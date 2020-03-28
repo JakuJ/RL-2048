@@ -7,16 +7,9 @@
 
 <script>
 export default {
-  data() {
-    return {};
-  },
   props: {
     board: {
       type: Object,
-      required: true
-    },
-    onrestart: {
-      type: Function,
       required: true
     }
   },
@@ -29,17 +22,14 @@ export default {
         return "Good Job!";
       } else if (this.board.hasLost()) {
         return "Game Over";
-      } else {
-        return "";
       }
     }
   },
 
   methods: {
     restart() {
-      this.onrestart && this.onrestart();
+      this.$emit("gameRestarted");
     }
-  },
-  components: {}
+  }
 };
 </script>
