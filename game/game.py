@@ -121,3 +121,11 @@ def possible_moves(matrix):
 	check_lr(np.rot90(matrix), 'up', 'down')
 
 	return possible
+
+def dump_state(matrix):
+    return matrix.reshape((1, 16)).astype(np.float32)
+
+def random_choice(matrix):
+	pm = list(possible_moves(matrix))
+	n = len(pm)
+	return pm[np.random.randint(0, n)]
