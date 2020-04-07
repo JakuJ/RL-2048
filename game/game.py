@@ -11,8 +11,10 @@ def swipe(board, direction):
 
 	rotated = np.rot90(board, rots)
 	score = swipe_up(rotated)
-	board = np.rot90(rotated, 4 - rots)
-	return board, score
+	after_state = np.rot90(rotated, 4 - rots)
+	next_state = np.copy(after_state)
+	generate_new_tile(next_state)
+	return after_state, next_state, score
 
 
 def swipe_up(board):
@@ -39,8 +41,6 @@ def swipe_up(board):
 		return score
 
 	slide_up(board)
-	generate_new_tile(board)
-
 	return score
 
 
