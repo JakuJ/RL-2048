@@ -20,14 +20,18 @@ Board &Board::operator=(const Board &other) {
 }
 
 const int &Board::at(int row, int column) const {
+#if DEBUG
     assert(row >= 0 && row < size);
     assert(column >= 0 && column < size);
+#endif
     return matrix[row * size + column];
 }
 
 int &Board::at(int row, int column) {
+#if DEBUG
     assert(row >= 0 && row < size);
     assert(column >= 0 && column < size);
+#endif
     return matrix[row * size + column];
 }
 

@@ -5,6 +5,8 @@
 #include "../headers/TD.hpp"
 #include "../headers/helpers.hpp"
 
+#define DEBUG 0
+
 int main() {
     std::unique_ptr<Model> model = std::make_unique<Ensemble>();
 
@@ -12,9 +14,10 @@ int main() {
     for (int epoch = 1; epoch <= epochs; epoch++) {
         auto[board, score] = playGame(model.get());
 
+#if DEBUG
         auto[lower_bound, upper_bound] = score_bounds(board);
         assert(score >= lower_bound && score <= upper_bound);
-
+#endif
         const int max = *std::max_element(board.cbegin(), board.cend());
 
         static const std::string red("\033[0;31m");
