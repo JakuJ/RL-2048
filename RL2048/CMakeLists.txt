@@ -7,4 +7,4 @@ add_compile_options("-Wall" "-pedantic" "-O3" "-ffast-math")
 
 file(GLOB SOURCES "headers/*.hpp" "src/*.cpp")
 
-add_executable(RL2048 ${SOURCES})
+add_executable(RL2048 ${SOURCES} headers/random.hpp)

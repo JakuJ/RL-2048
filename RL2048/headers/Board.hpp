@@ -9,14 +9,14 @@ class Board {
 public:
     static constexpr int size = 4;
 
-    void rotateLeft();
-
 private:
     int matrix[size * size] = {0};
 
     bool slideUp();
 
     int swipeUp();
+
+    void rotateLeft();
 
 public:
     Board();
@@ -29,21 +29,17 @@ public:
 
     Board &operator=(Board &&) = delete;
 
-    const int &at(int, int) const;
+    [[nodiscard]] const int &at(int, int) const;
 
-    int &at(int, int);
+    [[nodiscard]] int &at(int, int);
+
+    [[nodiscard]] std::tuple<Board, int> move(int) const;
+
+    [[nodiscard]] std::vector<int> possibleMoves() const;
 
     void addRandom();
 
-    std::tuple<Board, int> move(int) const;
-
-    std::vector<int> possibleMoves() const;
-
     int maximum();
-
-    bool operator==(const Board &rhs) const;
-
-    bool operator!=(const Board &rhs) const;
 
     friend std::ostream &operator<<(std::ostream &os, const Board &board);
 };

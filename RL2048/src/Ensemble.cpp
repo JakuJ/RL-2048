@@ -23,7 +23,7 @@ Ensemble::Ensemble() {
 double Ensemble::apply(const Board &board) const {
     double score = 0;
 
-    for (const auto & tuple : tuples) {
+    for (const auto &tuple : tuples) {
         score += tuple->apply(board);
     }
     return score;

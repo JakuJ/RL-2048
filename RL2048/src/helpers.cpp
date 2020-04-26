@@ -1,8 +1,7 @@
 #include "../headers/helpers.hpp"
 
-
-static inline uint32_t log2(const uint32_t x) {
-    uint32_t y;
+static inline unsigned int fast_log2(const unsigned int x) {
+    unsigned int y;
     asm ( "\tbsr %1, %0\n"
     : "=r"(y)
     : "r" (x)
@@ -11,7 +10,7 @@ static inline uint32_t log2(const uint32_t x) {
 }
 
 int normalize(int x) {
-    return x ? static_cast<int>(log2(x)) : 0;
+    return x ? static_cast<int>(fast_log2(x)) : 0;
 }
 
 std::tuple<int, int> score_bounds(const Board &board) {

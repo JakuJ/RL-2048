@@ -4,6 +4,7 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 __pycache__/
+cmake-build-debug
 
 # Editor directories and files
 .idea

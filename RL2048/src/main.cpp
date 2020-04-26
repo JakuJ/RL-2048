@@ -18,7 +18,6 @@ int main() {
         if (board.maximum() >= 2048) {
             std::cout << "Epoch " << epoch << " / " << epochs << ", score: " << score << std::endl;
             std::cout << board << std::endl;
-            break;
         }
     }
 

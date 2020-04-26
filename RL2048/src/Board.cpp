@@ -1,7 +1,8 @@
-#include "../headers/Board.hpp"
-#include <algorithm>
-#include <iostream>
 #include <cassert>
+#include <iostream>
+#include <algorithm>
+#include "../headers/Board.hpp"
+#include "../headers/random.hpp"
 
 Board::Board() {
     addRandom();
@@ -45,13 +46,12 @@ void Board::rotateLeft() {
 }
 
 void Board::addRandom() {
-    static unsigned int seed = 13;
     int row, col;
     do {
-        row = rand_r(&seed) % size;
-        col = rand_r(&seed) % size;
+        row = random(0, 3);
+        col = random(0, 3);
     } while (at(row, col) != 0);
-    at(row, col) = (rand_r(&seed) % 10 < 9) ? 2 : 4;
+    at(row, col) = (random(1, 10) <= 9) ? 2 : 4;
 }
 
 std::vector<int> Board::possibleMoves() const {
@@ -193,12 +193,3 @@ std::ostream &operator<<(std::ostream &os, const Board &board) {
 int Board::maximum() {
     return *std::max_element(matrix, matrix + size * size);
 }
-
-bool Board::operator==(const Board &rhs) const {
-    return std::equal(matrix, std::end(matrix), rhs.matrix, std::end(rhs.matrix));
-}
-
-bool Board::operator!=(const Board &rhs) const {
-    return !(rhs == *this);
-}
-
