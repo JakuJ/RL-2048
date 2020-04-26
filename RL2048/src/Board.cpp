@@ -9,12 +9,12 @@ Board::Board() {
 }
 
 Board::Board(const Board &other) {
-    std::copy(other.matrix, std::end(other.matrix), matrix);
+    std::copy(other.cbegin(), other.cend(), std::begin(matrix));
 }
 
 Board &Board::operator=(const Board &other) {
     if (this != &other) {
-        std::copy(other.matrix, std::end(other.matrix), matrix);
+        std::copy(other.cbegin(), other.cend(), std::begin(matrix));
     }
     return *this;
 }
@@ -29,6 +29,14 @@ int &Board::at(int row, int column) {
     assert(row >= 0 && row < size);
     assert(column >= 0 && column < size);
     return matrix[row * size + column];
+}
+
+const int *Board::cbegin() const {
+    return std::cbegin(matrix);
+}
+
+const int *Board::cend() const {
+    return std::cend(matrix);
 }
 
 void Board::rotateLeft() {
@@ -46,16 +54,17 @@ void Board::rotateLeft() {
 }
 
 void Board::addRandom() {
-    int row, col;
+    int pos;
     do {
-        row = random(0, 3);
-        col = random(0, 3);
-    } while (at(row, col) != 0);
-    at(row, col) = (random(1, 10) <= 9) ? 2 : 4;
+        pos = random(size * size);
+    } while (matrix[pos] != 0);
+
+    matrix[pos] = random(10) ? 2 : 4;
 }
 
 std::vector<int> Board::possibleMoves() const {
     std::vector<int> possible;
+    possible.reserve(4);
 
     bool can_left = false, can_right = false;
 
@@ -113,25 +122,28 @@ std::vector<int> Board::possibleMoves() const {
     return possible;
 }
 
-bool Board::slideUp() {
-    bool moved = false;
-
+void Board::slideUp() {
     for (int col = 0; col < size; col++) {
-        for (int row = 0; row < size - 1; row++) {
-            for (int to_row = row; to_row >= 0; to_row--) {
-                if (at(to_row, col) == 0 && at(to_row + 1, col) != 0) {
-                    std::swap(at(to_row, col), at(to_row + 1, col));
-                    moved = true;
+        int count = 0;
+
+        for (int row = 0; row < size; row++) {
+            int val = at(row, col);
+            if (val != 0) {
+                if (count != row) {
+                    at(count, col) = val;
                 }
+                count++;
             }
         }
-    }
 
-    return moved;
+        while (count < size) {
+            at(count++, col) = 0;
+        }
+    }
 }
 
 int Board::swipeUp() {
-    bool moved = slideUp();
+    slideUp();
     int score = 0;
     bool merged = false;
 
@@ -142,17 +154,12 @@ int Board::swipeUp() {
                 continue;
             }
             if (at(row, col) == at(row + 1, col)) {
-                at(row, col) *= 2;
+                score += (at(row, col) *= 2);
                 at(row + 1, col) = 0;
-                score += at(row, col);
-                row++;  // skip the now zero tile
                 merged = true;
+                row++;  // skip the now zero tile
             }
         }
-    }
-
-    if (!moved) {
-        assert(merged);
     }
 
     if (merged) {
@@ -161,7 +168,6 @@ int Board::swipeUp() {
 
     return score;
 }
-
 
 std::tuple<Board, int> Board::move(int direction) const {
     Board b(*this);
@@ -188,8 +194,4 @@ std::ostream &operator<<(std::ostream &os, const Board &board) {
         os << std::endl;
     }
     return os;
-}
-
-int Board::maximum() {
-    return *std::max_element(matrix, matrix + size * size);
 }

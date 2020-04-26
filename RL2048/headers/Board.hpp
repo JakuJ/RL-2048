@@ -12,7 +12,7 @@ public:
 private:
     int matrix[size * size] = {0};
 
-    bool slideUp();
+    void slideUp();
 
     int swipeUp();
 
@@ -29,17 +29,23 @@ public:
 
     Board &operator=(Board &&) = delete;
 
+    // Indexing
+
     [[nodiscard]] const int &at(int, int) const;
 
     [[nodiscard]] int &at(int, int);
+
+    [[nodiscard]] const int *cbegin() const;
+
+    [[nodiscard]] const int *cend() const;
+
+    // Actions
 
     [[nodiscard]] std::tuple<Board, int> move(int) const;
 
     [[nodiscard]] std::vector<int> possibleMoves() const;
 
     void addRandom();
-
-    int maximum();
 
     friend std::ostream &operator<<(std::ostream &os, const Board &board);
 };

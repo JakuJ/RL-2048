@@ -16,15 +16,14 @@ int normalize(int x) {
 std::tuple<int, int> score_bounds(const Board &board) {
     int min = 0, max = 0;
 
-    for (int i = 0; i < Board::size; i++) {
-        for (int j = 0; j < Board::size; j++) {
-            int n2 = board.at(i, j);
-            if (n2 >= 8) {
-                min += (normalize(n2) - 2) * n2;
-            }
-            if (n2 >= 4) {
-                max += (normalize(n2) - 1) * n2;
-            }
+    for (const int *iter = board.cbegin(); iter != board.cend(); iter++) {
+        const int field = *iter;
+
+        if (field >= 8) {
+            min += (normalize(field) - 2) * field;
+        }
+        if (field >= 4) {
+            max += (normalize(field) - 1) * field;
         }
     }
 

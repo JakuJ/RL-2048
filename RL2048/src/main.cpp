@@ -15,9 +15,18 @@ int main() {
         auto[lower_bound, upper_bound] = score_bounds(board);
         assert(score >= lower_bound && score <= upper_bound);
 
-        if (board.maximum() >= 2048) {
-            std::cout << "Epoch " << epoch << " / " << epochs << ", score: " << score << std::endl;
+        const int max = *std::max_element(board.cbegin(), board.cend());
+
+        if (max == 2048) {
+            std::cout << "|";
+        } else if (max >= 4096) {
+            std::cout << std::endl << "Epoch " << epoch << " / " << epochs << ", score: " << score << std::endl;
             std::cout << board << std::endl;
+        } else {
+            std::cout << ".";
+        }
+        if (epoch % 100 == 0) {
+            std::cout << std::endl;
         }
     }
 
