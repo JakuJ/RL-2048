@@ -9,10 +9,12 @@ def swipe(board, direction):
 		'left' : 3,
 	}[direction]
 
-	rotated = np.rot90(board, rots)
+	rotated = np.copy(np.rot90(board, rots))
 	score = swipe_up(rotated)
-	board = np.rot90(rotated, 4 - rots)
-	return board, score
+	after_state = np.copy(np.rot90(rotated, 4 - rots))
+	next_state = np.copy(after_state)
+	generate_new_tile(next_state)
+	return after_state, next_state, score
 
 
 def swipe_up(board):
@@ -39,8 +41,6 @@ def swipe_up(board):
 		return score
 
 	slide_up(board)
-	generate_new_tile(board)
-
 	return score
 
 
@@ -65,12 +65,10 @@ def get_highest_tile(matrix):
 
 def generate_new_tile(matrix):
 	size = matrix.shape[0]
-	x = np.random.randint(0, size)
-	y = np.random.randint(0, size)
+	x, y = np.random.randint(0, size, size=(2,))
 
 	while matrix[y, x]:
-		x = np.random.randint(0, size)
-		y = np.random.randint(0, size)
+		x, y = np.random.randint(0, size, size=(2,))
 
 	matrix[y, x] = 2 if np.random.uniform() < 0.9 else 4
 
@@ -122,8 +120,10 @@ def possible_moves(matrix):
 
 	return possible
 
+
 def dump_state(matrix):
-    return matrix.reshape((1, 16)).astype(np.float32)
+	return matrix.reshape((1, 16)).astype(np.float32)
+
 
 def random_choice(matrix):
 	pm = list(possible_moves(matrix))
