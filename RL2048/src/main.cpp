@@ -8,8 +8,8 @@
 int main() {
     std::unique_ptr<Model> model = std::make_unique<Ensemble>();
 
-    const int epochs = 10000;
-    for (int epoch = 0; epoch < epochs; epoch++) {
+    const int epochs = 100000;
+    for (int epoch = 1; epoch <= epochs; epoch++) {
         auto[board, score] = playGame(model.get());
 
         auto[lower_bound, upper_bound] = score_bounds(board);
@@ -17,16 +17,28 @@ int main() {
 
         const int max = *std::max_element(board.cbegin(), board.cend());
 
-        if (max == 2048) {
-            std::cout << "|";
-        } else if (max >= 4096) {
-            std::cout << std::endl << "Epoch " << epoch << " / " << epochs << ", score: " << score << std::endl;
-            std::cout << board << std::endl;
-        } else {
-            std::cout << ".";
+        static const std::string red("\033[0;31m");
+        static const std::string green("\033[0;32m");
+        static const std::string yellow("\033[0;93m");
+        static const std::string reset("\033[0m");
+
+        switch (max) {
+            case 2048:
+                std::cout << green << "|" << reset;
+                break;
+            case 4096:
+                std::cout << yellow << "X" << reset;
+                break;
+            case 8192:
+                std::cout << red << "@" << reset;
+                break;
+            default:
+                std::cout << ".";
+                break;
         }
+
         if (epoch % 100 == 0) {
-            std::cout << std::endl;
+            std::cout << " " << epoch << " / " << epochs << std::endl;
         }
     }
 
