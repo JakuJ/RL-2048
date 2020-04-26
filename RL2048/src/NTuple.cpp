@@ -3,7 +3,7 @@
 #include "../headers/helpers.hpp"
 
 NTuple::NTuple(int n, int m, TupleView func) : n(n), m(m), view(std::move(func)) {
-    LUT = new double[std::pow(m, n)]{0};
+    LUT = new double[(int)std::pow(m, n)]{0};
 }
 
 NTuple::~NTuple() {
