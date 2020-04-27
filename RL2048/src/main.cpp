@@ -7,6 +7,8 @@
 #include "../headers/helpers.hpp"
 #include "../headers/ScoreSaver.hpp"
 
+#define DEBUG 0
+
 void handleCLIArgs(int, char*[], int&, double&, std::string&);
 
 int main(int argc, char *argv[]) {
@@ -21,9 +23,10 @@ int main(int argc, char *argv[]) {
     for (int epoch = 1; epoch <= epochs; epoch++) {
         auto[board, score] = playGame(model.get());
 
+#if DEBUG
         auto[lower_bound, upper_bound] = score_bounds(board);
         assert(score >= lower_bound && score <= upper_bound);
-
+#endif
         const int max = *std::max_element(board.cbegin(), board.cend());
 
         scoreSaver->append(score, max);
