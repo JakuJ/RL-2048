@@ -1,8 +1,10 @@
 #include "../headers/Ensemble.hpp"
 #include "../headers/Board.hpp"
 
-Ensemble::Ensemble() {
+Ensemble::Ensemble(double learning_rate) {
     static constexpr int n = 4, m = 13;
+
+    this->learning_rate = learning_rate;
 
     for (int i = 0; i < 4; i++) {
         tuples.push_back(std::make_unique<NTuple>(n, m, [i](const Board &board, int ix) -> int {
@@ -36,7 +38,7 @@ void Ensemble::update(const Board &board, double expected) {
     double val = apply(board);
 
     double error = expected - val;
-    double delta = 0.0025 * error;
+    double delta = learning_rate * error;
 
     for (auto &tuple : tuples) {
         tuple->update(board, delta);
