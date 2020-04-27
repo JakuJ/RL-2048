@@ -4,6 +4,8 @@
 Ensemble::Ensemble(double lr) : learning_rate(lr) {
     static constexpr int n = 4, m = 13;
 
+    tuples.reserve(17);
+
     for (int i = 0; i < 4; i++) {
         tuples.emplace_back(n, m, [i](const Board &board, int ix) -> int {
             return board.at(i, ix);
