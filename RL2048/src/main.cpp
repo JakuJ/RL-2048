@@ -39,13 +39,16 @@ int main(int argc, char *argv[]) {
             std::cout << "Using " << omp_get_num_threads() << " threads" << std::endl;
         }
 #endif
-#pragma omp for schedule(dynamic, 100) nowait
+#pragma omp for schedule(dynamic) nowait
         for (int epoch = 1; epoch <= epochs; epoch++) {
             auto[board, score] = playGame(model.get());
 
             const int max = *std::max_element(board.cbegin(), board.cend());
 
-            scoreWriter.log(score, max);
+#pragma omp critical
+            {
+                scoreWriter.log(score, max);
+            }
 
             if (epoch % 100 == 0) {
                 std::cout << " " << epoch << " / " << epochs;
