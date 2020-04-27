@@ -1,10 +1,14 @@
 #include <iostream>
-#include <cassert>
+#include <memory>
 #include "../headers/Ensemble.hpp"
 #include "../headers/TD.hpp"
 #include "../headers/ScoreWriter.hpp"
 
-#define DEBUG 0
+#ifdef _OPENMP
+
+#include <omp.h>
+
+#endif
 
 int main(int argc, char *argv[]) {
     // Handle CLI arguments
@@ -13,55 +17,43 @@ int main(int argc, char *argv[]) {
         return EXIT_FAILURE;
     }
 
-    size_t epochs = std::strtol(argv[1], nullptr, 10);
+    int epochs = static_cast<int>(std::strtol(argv[1], nullptr, 10));
     auto learning_rate = std::stod(argv[2]);
     char *filename = argv[3];
 
+    // Setup OpenMP
+#ifdef _OPENMP
+    std::cout << "Max threads: " << omp_get_max_threads() << std::endl;
+#endif
     // Initialize the model
     std::unique_ptr<Model> model = std::make_unique<Ensemble>(learning_rate);
     ScoreWriter scoreWriter(filename);
 
-    int wins = 0;
-
-    // TODO: Przenieść to gdzieś
-    static const std::string red("\033[0;31m");
-    static const std::string green("\033[0;32m");
-    static const std::string yellow("\033[0;93m");
-    static const std::string reset("\033[0m");
-
     // Train the model
-    for (int epoch = 1; epoch <= epochs; epoch++) {
-        auto[board, score] = playGame(model.get());
 
-#if DEBUG
-        auto[lower_bound, upper_bound] = score_bounds(board);
-        assert(score >= lower_bound && score <= upper_bound);
+#pragma omp parallel default(none) shared(epochs, model, scoreWriter, std::cout)
+    {
+#ifdef _OPENMP
+#pragma omp single
+        {
+            std::cout << "Using " << omp_get_num_threads() << " threads" << std::endl;
+        }
 #endif
-        const int max = *std::max_element(board.cbegin(), board.cend());
-        scoreWriter.log(score, max);
+#pragma omp for schedule(dynamic, 100) nowait
+        for (int epoch = 1; epoch <= epochs; epoch++) {
+            auto[board, score] = playGame(model.get());
 
-        switch (max) {
-            case 2048:
-                std::cout << green << "|" << reset;
-                break;
-            case 4096:
-                std::cout << yellow << "X" << reset;
-                break;
-            case 8192:
-                std::cout << red << "@" << reset;
-                break;
-            default:
-                std::cout << ".";
-                break;
-        }
+            const int max = *std::max_element(board.cbegin(), board.cend());
 
-        if (max >= 2048) {
-            wins++;
-        }
+            scoreWriter.log(score, max);
 
-        if (epoch % 100 == 0) {
-            std::cout << " " << epoch << " / " << epochs << ", Won " << wins << "%" << std::endl;
-            wins = 0;
+            if (epoch % 100 == 0) {
+                std::cout << " " << epoch << " / " << epochs;
+#ifdef _OPENMP
+                std::cout << " | Thread " << omp_get_thread_num();
+#endif
+                std::cout << std::endl;
+            }
         }
     }
 
