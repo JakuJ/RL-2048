@@ -1,10 +1,8 @@
 #include "../headers/Ensemble.hpp"
 #include "../headers/Board.hpp"
 
-Ensemble::Ensemble(double learning_rate) {
+Ensemble::Ensemble(double lr) : learning_rate(lr) {
     static constexpr int n = 4, m = 13;
-
-    this->learning_rate = learning_rate;
 
     for (int i = 0; i < 4; i++) {
         tuples.push_back(std::make_unique<NTuple>(n, m, [i](const Board &board, int ix) -> int {

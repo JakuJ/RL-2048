@@ -1,20 +1,20 @@
 #pragma once
 
 #include <vector>
-#include "NTuple.hpp"
 #include <memory>
+#include "NTuple.hpp"
 
 class Ensemble : public Model {
+    const double learning_rate;
+
     std::vector<std::unique_ptr<NTuple>> tuples;
 
-    double learning_rate;
-
-    double apply(const Board &board) const override;
+    [[nodiscard]] double apply(const Board &board) const override;
 
     void update(const Board &, double) override;
 
 public:
-    Ensemble(double learning_rate);
+    explicit Ensemble(double learning_rate);
 
     ~Ensemble() override = default;
 };

@@ -1,25 +1,27 @@
-#include <cassert>
 #include <iostream>
-#include <vector>
-#include <stdexcept>
+#include <cassert>
 #include "../headers/Ensemble.hpp"
 #include "../headers/TD.hpp"
-#include "../headers/helpers.hpp"
-#include "../headers/ScoreSaver.hpp"
+#include "../headers/ScoreWriter.hpp"
 
 #define DEBUG 0
 
-void handleCLIArgs(int, char*[], int&, double&, std::string&);
-
 int main(int argc, char *argv[]) {
-    if(argc != 4) throw std::invalid_argument("ivalid number of arguments");
-    int epochs;
-    double learning_rate;
-    std::string filename;
-    handleCLIArgs(argc, argv, epochs, learning_rate, filename);
-    std::unique_ptr<Model> model = std::make_unique<Ensemble>(learning_rate);
-    std::unique_ptr<ScoreSaver> scoreSaver = std::make_unique<ScoreSaver>(filename);
+    // Handle CLI arguments
+    if (argc != 4) {
+        std::cout << "Usage: ./RL2048 epochs learning_rate log_filename" << std::endl;
+        return EXIT_FAILURE;
+    }
 
+    size_t epochs = std::strtol(argv[1], nullptr, 10);
+    auto learning_rate = std::stod(argv[2]);
+    char *filename = argv[3];
+
+    // Initialize the model
+    std::unique_ptr<Model> model = std::make_unique<Ensemble>(learning_rate);
+    ScoreWriter scoreWriter(filename);
+
+    // Train the model
     for (int epoch = 1; epoch <= epochs; epoch++) {
         auto[board, score] = playGame(model.get());
 
@@ -29,7 +31,7 @@ int main(int argc, char *argv[]) {
 #endif
         const int max = *std::max_element(board.cbegin(), board.cend());
 
-        scoreSaver->append(score, max);
+        scoreWriter.log(score, max);
 
         static const std::string red("\033[0;31m");
         static const std::string green("\033[0;32m");
@@ -56,12 +58,5 @@ int main(int argc, char *argv[]) {
         }
     }
 
-    return 0;
-}
-
-void handleCLIArgs(int argc, char *argv[], int &epoch, double &learning_rate,
-    std::string &filename){
-    epoch = atoi(argv[1]);
-    learning_rate = std::stod(std::string(argv[2]));
-    filename = std::string(argv[3]);
+    return EXIT_SUCCESS;
 }

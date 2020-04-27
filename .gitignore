@@ -29,3 +29,4 @@ _deps
 .vscode
 
 RL2048/RL2048
+*.csv

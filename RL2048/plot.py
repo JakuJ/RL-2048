@@ -1,20 +1,23 @@
-#jeden argument- wynik z gry w cpp
-
-import matplotlib.pyplot as plt
-import numpy as np
 import sys
 
-def moving_average(a, n=3) :
-    ret = np.cumsum(a, dtype=float)
-    ret[n:] = ret[n:] - ret[:-n]
-    return ret[n - 1:] / n
+import matplotlib.pyplot as plt
+import pandas as pd
 
-with open (sys.argv[1], "r") as myfile:
-    data=eval(myfile.read())
+if __name__ == "__main__":
+    df = pd.read_csv(sys.argv[1])
+    df['won'] = df['max'] >= 2048
 
-#scores = [i[0] for i in data]
-won_games = [1 if i[1] >= 2048 else 0 for i in data]
+    fig, ax = plt.subplots()
+    fig.suptitle('Average metrics over 100 games')
 
-plt.plot(moving_average(np.array(won_games), 100))
-plt.ylim(0,1)
-plt.show()
+    ax = plt.subplot(2, 1, 1)
+    ax.plot(df['score'].rolling(window=100).mean())
+    ax.set_ylabel('Score')
+
+    ax = plt.subplot(2, 1, 2)
+    ax.plot(df['won'].rolling(window=100).mean())
+    ax.set_ylabel('Win rate')
+    ax.set_xlabel('Epoch')
+    ax.set_ylim((0, 1))
+
+    plt.show()
