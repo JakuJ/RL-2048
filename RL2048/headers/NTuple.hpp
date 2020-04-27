@@ -11,16 +11,20 @@ class NTuple : Model {
     int n, m;
     double *LUT;
 
-    TupleView view;
+    const TupleView view;
 
 public:
     NTuple(int n, int m, TupleView func);
 
+    NTuple(const NTuple &) = delete;
+
+    NTuple(NTuple &&) noexcept;
+
     ~NTuple() override;
 
-    int address(const Board &) const;
+    [[nodiscard]] int address(const Board &) const;
 
-    double apply(const Board &) const override;
+    [[nodiscard]] double apply(const Board &) const override;
 
     void update(const Board &, double) override;
 };

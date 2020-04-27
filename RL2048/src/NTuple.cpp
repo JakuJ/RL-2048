@@ -1,13 +1,18 @@
 #include <cmath>
+#include <iostream>
 #include "../headers/NTuple.hpp"
 #include "../headers/helpers.hpp"
 
 NTuple::NTuple(int n, int m, TupleView func) : n(n), m(m), view(std::move(func)) {
-    LUT = new double[(int)std::pow(m, n)]{0};
+    LUT = new double[static_cast<int>(std::pow(m, n))]{0};
 }
 
 NTuple::~NTuple() {
     delete[] LUT;
+}
+
+NTuple::NTuple(NTuple &&other) noexcept : n(other.n), m(other.m), LUT(other.LUT), view(other.view) {
+    other.LUT = nullptr;
 }
 
 int NTuple::address(const Board &board) const {

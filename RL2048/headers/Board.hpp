@@ -31,9 +31,13 @@ public:
 
     // Indexing
 
-    [[nodiscard]] const int &at(int, int) const;
+    [[nodiscard]] inline __attribute__((always_inline)) int &at(int row, int column) {
+        return matrix[row * size + column];
+    }
 
-    [[nodiscard]] int &at(int, int);
+    [[nodiscard]] inline __attribute__((always_inline)) const int &at(int row, int column) const {
+        return matrix[row * size + column];
+    }
 
     [[nodiscard]] const int *cbegin() const;
 

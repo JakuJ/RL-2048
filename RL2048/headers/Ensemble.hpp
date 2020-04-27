@@ -7,7 +7,7 @@
 class Ensemble : public Model {
     const double learning_rate;
 
-    std::vector<std::unique_ptr<NTuple>> tuples;
+    std::vector<NTuple> tuples;
 
     [[nodiscard]] double apply(const Board &board) const override;
 

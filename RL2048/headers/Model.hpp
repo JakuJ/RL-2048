@@ -4,9 +4,9 @@
 
 class Model {
 public:
-    virtual ~Model() {}
+    virtual ~Model() = default;
 
-    virtual double apply(const Board &) const = 0;
+    [[nodiscard]] virtual double apply(const Board &) const = 0;
 
     virtual void update(const Board &, double) = 0;
 };

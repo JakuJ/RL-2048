@@ -21,6 +21,14 @@ int main(int argc, char *argv[]) {
     std::unique_ptr<Model> model = std::make_unique<Ensemble>(learning_rate);
     ScoreWriter scoreWriter(filename);
 
+    int wins = 0;
+
+    // TODO: Przenieść to gdzieś
+    static const std::string red("\033[0;31m");
+    static const std::string green("\033[0;32m");
+    static const std::string yellow("\033[0;93m");
+    static const std::string reset("\033[0m");
+
     // Train the model
     for (int epoch = 1; epoch <= epochs; epoch++) {
         auto[board, score] = playGame(model.get());
@@ -30,13 +38,7 @@ int main(int argc, char *argv[]) {
         assert(score >= lower_bound && score <= upper_bound);
 #endif
         const int max = *std::max_element(board.cbegin(), board.cend());
-
         scoreWriter.log(score, max);
-
-        static const std::string red("\033[0;31m");
-        static const std::string green("\033[0;32m");
-        static const std::string yellow("\033[0;93m");
-        static const std::string reset("\033[0m");
 
         switch (max) {
             case 2048:
@@ -53,8 +55,13 @@ int main(int argc, char *argv[]) {
                 break;
         }
 
+        if (max >= 2048) {
+            wins++;
+        }
+
         if (epoch % 100 == 0) {
-            std::cout << " " << epoch << " / " << epochs << std::endl;
+            std::cout << " " << epoch << " / " << epochs << ", Won " << wins << "%" << std::endl;
+            wins = 0;
         }
     }
 
