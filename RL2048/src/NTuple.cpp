@@ -30,5 +30,7 @@ double NTuple::apply(const Board &board) const {
 }
 
 void NTuple::update(const Board &board, double delta) {
-    LUT[address(board)] += delta;
+    int index = address(board);
+#pragma omp atomic
+    LUT[index] += delta;
 }
