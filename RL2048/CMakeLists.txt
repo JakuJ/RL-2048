@@ -8,6 +8,6 @@ find_package(OpenMP)
 
 file(GLOB SOURCES "headers/*.hpp" "src/*.cpp")
 
-add_executable(RL2048 ${SOURCES} headers/random.hpp)
+add_executable(RL2048 ${SOURCES})
 
 target_link_libraries(RL2048 PUBLIC OpenMP::OpenMP_CXX)

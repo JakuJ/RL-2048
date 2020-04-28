@@ -2,7 +2,7 @@
 #include <iostream>
 #include <algorithm>
 #include "../headers/Board.hpp"
-#include "../headers/random.hpp"
+#include "../headers/Random.hpp"
 
 Board::Board() {
     addRandom();

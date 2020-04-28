@@ -1,12 +1,13 @@
 #pragma once
 
 #include <vector>
+#include <memory>
 #include "NTuple.hpp"
 
 class Ensemble : public Model {
     const double learning_rate;
 
-    std::vector<NTuple> tuples;
+    std::vector<std::unique_ptr<NTupleInterface>> tuples;
 
     [[nodiscard]] double apply(const Board &board) const override;
 

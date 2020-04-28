@@ -2,11 +2,10 @@
 
 #include "Board.hpp"
 
-class Model {
-public:
+struct Model {
     virtual ~Model() = default;
 
-    [[nodiscard]] virtual double apply(const Board &) const = 0;
-
     virtual void update(const Board &, double) = 0;
+
+    [[nodiscard]] virtual double apply(const Board &) const = 0;
 };
