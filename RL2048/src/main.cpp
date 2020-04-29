@@ -32,8 +32,9 @@ int main(int argc, char *argv[]) {
             std::cout << "Using " << omp_get_num_threads() << " threads" << std::endl;
         }
 
-        const char *red("\033[0;31m");
         const char *green("\033[0;32m");
+        const char *blue("\033[0;34m");
+        const char *red("\033[0;31m");
         const char *reset("\033[0m");
 
 #pragma omp for schedule(dynamic) nowait
@@ -46,16 +47,16 @@ int main(int argc, char *argv[]) {
             {
                 switch (max) {
                     case 2048:
-                        std::cout << green << "|" << reset;
+                        std::cout << green << "█" << reset;
                         break;
                     case 4096:
-                        std::cout << red << "X" << reset;
+                        std::cout << blue << "█" << reset;
                         break;
                     case 8192:
-                        std::cout << red << "@" << reset;
+                        std::cout << red << "█" << reset;
                         break;
                     default:
-                        std::cout << ".";
+                        std::cout << "█";
                         break;
                 }
                 scoreWriter.log(score, max);
