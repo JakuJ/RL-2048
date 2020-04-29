@@ -3,31 +3,33 @@
 #include <functional>
 #include <tuple>
 #include <cmath>
+#include <memory>
 
 #include "Board.hpp"
 #include "Model.hpp"
 #include "Normalize.hpp"
 #include "NTupleInterface.hpp"
 
-
 template<int N>
 class NTuple : public NTupleInterface {
-    double *LUT;
+    std::shared_ptr<double> LUT;
 
     std::tuple<int, int> indices[N];
 
     int powers[N]{0};
 
+    [[nodiscard]] int address(const Board &) const;
+
 public:
     NTuple(int, std::tuple<int, int>[N]);
+
+    NTuple(int, std::tuple<int, int>[N], std::shared_ptr<double>);
 
     NTuple(const NTuple &) = delete;
 
     NTuple(NTuple &&) = delete;
 
-    ~NTuple() override;
-
-    [[nodiscard]] int address(const Board &) const;
+    ~NTuple() override = default;
 
     [[nodiscard]] double apply(const Board &) const override;
 
@@ -36,7 +38,8 @@ public:
 
 template<int N>
 NTuple<N>::NTuple(int m, std::tuple<int, int> ixs[N]) {
-    LUT = new double[static_cast<size_t>(std::pow(m, N))];
+    size_t size = static_cast<size_t>(std::pow(m, N));
+    LUT = std::shared_ptr<double>(new double[size], std::default_delete<double[]>());
 
     for (int i = 0; i < N; i++) {
         indices[i] = ixs[i];
@@ -45,14 +48,15 @@ NTuple<N>::NTuple(int m, std::tuple<int, int> ixs[N]) {
 }
 
 template<int N>
-NTuple<N>::~NTuple() {
-    delete[] LUT;
+NTuple<N>::NTuple(int m, std::tuple<int, int> ixs[N], std::shared_ptr<double> weights): LUT(weights) {
+    for (int i = 0; i < N; i++) {
+        indices[i] = ixs[i];
+        powers[i] = std::pow(m, i);
+    }
 }
 
 template<int N>
 int NTuple<N>::address(const Board &board) const {
-
-
     int address = 0;
     for (int i = 0; i < N; i++) {
         auto[x, y] = indices[i];
@@ -63,7 +67,7 @@ int NTuple<N>::address(const Board &board) const {
 
 template<int N>
 double NTuple<N>::apply(const Board &board) const {
-    return LUT[address(board)];
+    return LUT.get()[address(board)];
 }
 
 template<int N>
@@ -71,5 +75,5 @@ void NTuple<N>::update(const Board &board, double delta) {
     int index = address(board);
 
 #pragma omp atomic
-    LUT[index] += delta;
+    LUT.get()[index] += delta;
 }

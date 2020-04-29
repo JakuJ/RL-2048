@@ -1,9 +1,14 @@
+#include <omp.h>
 #include <iostream>
 #include <memory>
-#include <omp.h>
 #include "../headers/Ensemble.hpp"
 #include "../headers/TD.hpp"
 #include "../headers/ScoreWriter.hpp"
+
+#define RED "\033[0;31m"
+#define GREEN "\033[0;32m"
+#define BLUE "\033[0;34m"
+#define RESET "\033[0;0m"
 
 int main(int argc, char *argv[]) {
     // Handle CLI arguments
@@ -32,10 +37,6 @@ int main(int argc, char *argv[]) {
             std::cout << "Using " << omp_get_num_threads() << " threads" << std::endl;
         }
 
-        const char *red("\033[0;31m");
-        const char *green("\033[0;32m");
-        const char *reset("\033[0m");
-
 #pragma omp for schedule(dynamic) nowait
         for (int epoch = 1; epoch <= epochs; epoch++) {
             auto[board, score] = playGame(model.get());
@@ -46,16 +47,16 @@ int main(int argc, char *argv[]) {
             {
                 switch (max) {
                     case 2048:
-                        std::cout << green << "|" << reset;
+                        std::cout << GREEN << "█" << RESET;
                         break;
                     case 4096:
-                        std::cout << red << "X" << reset;
+                        std::cout << BLUE << "█" << RESET;
                         break;
                     case 8192:
-                        std::cout << red << "@" << reset;
+                        std::cout << RED << "█" << RESET;
                         break;
                     default:
-                        std::cout << ".";
+                        std::cout << " ";
                         break;
                 }
                 scoreWriter.log(score, max);
