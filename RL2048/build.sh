@@ -9,6 +9,4 @@ set -e
   fi
   make
   zsh -c "time ./RL2048 $1 $2 ../log.csv"
-  cd ..
-  python3 plot.py log.csv
 )

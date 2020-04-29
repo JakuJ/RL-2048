@@ -29,11 +29,13 @@ const int *Board::cend() const {
 
 void Board::rotateLeft() {
     // transpose
-    for (int row = 0; row < size; row++) {
-        for (int col = row + 1; col < size; col++) {
-            std::swap(at(row, col), at(col, row));
-        }
-    }
+    std::swap(matrix[1], matrix[4]);
+    std::swap(matrix[2], matrix[8]);
+    std::swap(matrix[3], matrix[12]);
+    std::swap(matrix[6], matrix[9]);
+    std::swap(matrix[7], matrix[13]);
+    std::swap(matrix[11], matrix[14]);
+
     // reverse columns
     for (int col = 0; col < size; col++) {
         std::swap(at(0, col), at(3, col));
