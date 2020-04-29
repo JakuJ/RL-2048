@@ -52,16 +52,7 @@ std::vector<NTupleInterface *> SymmetryExpander::expand(int m, std::tuple<int, i
     auto LUT = std::shared_ptr<double>(new double[size], std::default_delete<double[]>());
 
     for (auto ixs : symIndices) {
-        std::tuple<int, int> arr[N];
-        std::copy(ixs.begin(), ixs.end(), arr);
-
-        std::cout << "Adding tuple:";
-        for (auto[x, y]: arr) {
-            std::cout << " (" << x << ", " << y << ")";
-        }
-        std::cout << std::endl;
-
-        ret.push_back(new NTuple<N>(m, arr, LUT));
+        ret.push_back(new NTuple<N>(m, ixs.begin(), LUT));
     }
     return ret;
 }

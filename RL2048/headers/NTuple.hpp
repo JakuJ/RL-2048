@@ -4,14 +4,11 @@
 #include <tuple>
 #include <cmath>
 #include <memory>
-#include <iostream>
 
 #include "Board.hpp"
 #include "Model.hpp"
 #include "Normalize.hpp"
 #include "NTupleInterface.hpp"
-
-class SymmetryExpander;
 
 template<int N>
 class NTuple : public NTupleInterface {
@@ -23,10 +20,10 @@ class NTuple : public NTupleInterface {
 
     [[nodiscard]] int address(const Board &) const;
 
-    NTuple(int, std::tuple<int, int>[N], std::shared_ptr<double>);
-
 public:
     NTuple(int, std::tuple<int, int>[N]);
+
+    NTuple(int, std::tuple<int, int>[N], std::shared_ptr<double>);
 
     NTuple(const NTuple &) = delete;
 
@@ -37,8 +34,6 @@ public:
     [[nodiscard]] double apply(const Board &) const override;
 
     void update(const Board &, double) override;
-
-    friend class SymmetryExpander;
 };
 
 template<int N>
@@ -54,7 +49,6 @@ NTuple<N>::NTuple(int m, std::tuple<int, int> ixs[N]) {
 
 template<int N>
 NTuple<N>::NTuple(int m, std::tuple<int, int> ixs[N], std::shared_ptr<double> weights): LUT(weights) {
-    std::cout << "Creating a tuple from shared weight array at " << weights.get() << std::endl;
     for (int i = 0; i < N; i++) {
         indices[i] = ixs[i];
         powers[i] = std::pow(m, i);
