@@ -55,6 +55,9 @@ int main(int argc, char *argv[]) {
                     case 8192:
                         std::cout << RED << "█" << RESET;
                         break;
+                    case 16384:
+                        std::cout << std::endl << RED << "** 16K **" << RESET << std::endl;
+                        break;
                     default:
                         std::cout << " ";
                         break;
