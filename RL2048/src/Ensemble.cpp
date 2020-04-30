@@ -1,33 +1,36 @@
 #include "../headers/Ensemble.hpp"
 #include "../headers/Board.hpp"
-#include "../headers/SymmetryExpander.hpp"
 
 Ensemble::Ensemble(double lr) : learning_rate(lr) {
-    static constexpr int m = 14;
-    tuples.reserve(16);
+    static constexpr int m = 15;
+    tuples.reserve(17);
 
-    std::tuple<int, int> outer[7]{{0, 0},
-                                  {1, 0},
-                                  {2, 0},
-                                  {3, 0},
-                                  {2, 1},
-                                  {3, 1},
-                                  {3, 2}};
+    for (int i : {0, 1, 2, 3}) {
+        std::tuple<int, int> row[4] = {{0, i},
+                                       {1, i},
+                                       {2, i},
+                                       {3, i}};
 
-    for (auto *k : SymmetryExpander::expand<7>(m, outer)) {
-        tuples.emplace_back(k);
+        std::tuple<int, int> column[4] = {{i, 0},
+                                          {i, 1},
+                                          {i, 2},
+                                          {i, 3}};
+
+        tuples.emplace_back(new NTuple<4>(m, row));
+        tuples.emplace_back(new NTuple<4>(m, column));
     }
 
-    std::tuple<int, int> inner[7]{{0, 1},
-                                  {1, 1},
-                                  {2, 1},
-                                  {3, 1},
-                                  {2, 2},
-                                  {3, 2},
-                                  {3, 3}};
+    for (int i = 0; i < Board::size - 1; i++) {
+        for (int j = 0; j < Board::size - 1; j++) {
+            std::tuple<int, int> square[4] = {
+                    {i,     j},
+                    {i + 1, j},
+                    {i + 1, j + 1},
+                    {i,     j + 1},
+            };
 
-    for (auto *k : SymmetryExpander::expand<7>(m, inner)) {
-        tuples.emplace_back(k);
+            tuples.emplace_back(new NTuple<4>(m, square));
+        }
     }
 }
 

@@ -23,12 +23,12 @@ std::vector<std::tuple<int, int>> SymmetryExpander::getSymmetries(std::tuple<int
 
     return std::vector<std::tuple<int, int>>{
             std::make_tuple(c, r),
-            std::make_tuple(M - c, r),
             std::make_tuple(c, M - r),
+            std::make_tuple(M - c, r),
             std::make_tuple(M - c, M - r),
             std::make_tuple(r, c),
-            std::make_tuple(M - r, c),
             std::make_tuple(r, M - c),
+            std::make_tuple(M - r, c),
             std::make_tuple(M - r, M - c)
     };
 }
@@ -45,11 +45,13 @@ std::vector<NTupleInterface *> SymmetryExpander::expand(int m, std::tuple<int, i
         }
     }
 
-    std::vector<NTupleInterface *> ret;
+    std::vector < NTupleInterface * > ret;
     ret.reserve(numSymmetries);
 
     auto size = static_cast<size_t>(std::pow(m, N));
-    auto LUT = std::shared_ptr<double>(new double[size], std::default_delete<double[]>());
+
+    auto weights = new double[size]{0};
+    auto LUT = std::shared_ptr<double>(weights, std::default_delete<double[]>());
 
     for (auto ixs : symIndices) {
         ret.push_back(new NTuple<N>(m, ixs.begin(), LUT));

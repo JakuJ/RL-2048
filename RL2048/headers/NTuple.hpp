@@ -38,8 +38,10 @@ public:
 
 template<int N>
 NTuple<N>::NTuple(int m, std::tuple<int, int> ixs[N]) {
-    size_t size = static_cast<size_t>(std::pow(m, N));
-    LUT = std::shared_ptr<double>(new double[size], std::default_delete<double[]>());
+    auto size = static_cast<size_t>(std::pow(m, N));
+
+    auto weights = new double[size]{0};
+    LUT = std::shared_ptr<double>(weights, std::default_delete<double[]>());
 
     for (int i = 0; i < N; i++) {
         indices[i] = ixs[i];
@@ -48,7 +50,7 @@ NTuple<N>::NTuple(int m, std::tuple<int, int> ixs[N]) {
 }
 
 template<int N>
-NTuple<N>::NTuple(int m, std::tuple<int, int> ixs[N], std::shared_ptr<double> weights): LUT(weights) {
+NTuple<N>::NTuple(int m, std::tuple<int, int> ixs[N], std::shared_ptr<double> weights): LUT(std::move(weights)) {
     for (int i = 0; i < N; i++) {
         indices[i] = ixs[i];
         powers[i] = std::pow(m, i);
