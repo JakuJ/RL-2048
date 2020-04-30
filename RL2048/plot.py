@@ -11,11 +11,11 @@ if __name__ == "__main__":
     fig.suptitle('Average metrics over 100 games')
 
     ax = plt.subplot(2, 1, 1)
-    ax.plot(df['score'].rolling(window=100).mean())
+    ax.plot(df['score'].rolling(window=300).mean())
     ax.set_ylabel('Score')
 
     ax = plt.subplot(2, 1, 2)
-    ax.plot(df['won'].rolling(window=100).mean())
+    ax.plot(df['won'].rolling(window=300).mean())
     ax.set_ylabel('Win rate')
     ax.set_xlabel('Epoch')
     ax.set_ylim((0, 1))

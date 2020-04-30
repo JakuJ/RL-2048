@@ -2,17 +2,17 @@
 
 void learn(Model *model, double s1Val, const Board &s1, const Board &s2) {
     auto actions = s2.possibleMoves();
-    if (!actions.empty()) {
+    if (actions.empty()) {
+        model->update(s1, -s1Val);
+    } else {
         double bestValue = std::numeric_limits<double>::lowest();
 
         for (int action : actions) {
-            auto[s2_1, r] = s2.move(action);
-            bestValue = std::max(bestValue, r + model->apply(s2_1));
+            auto[s3, r] = s2.move(action);
+            bestValue = std::max(bestValue, r + model->apply(s3));
         }
 
         model->update(s1, bestValue - s1Val);
-    } else {
-        model->update(s1, -s1Val);
     }
 }
 
