@@ -9,6 +9,8 @@ class Board {
 public:
     static constexpr int size = 4;
 
+	int stage = 0;
+
 private:
     int matrix[size * size] = {0};
 

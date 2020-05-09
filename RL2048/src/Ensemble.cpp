@@ -50,3 +50,10 @@ void Ensemble::update(const Board &board, double error) {
         tuple->update(board, delta);
     }
 }
+
+void Ensemble::copyLUTs(int stage)
+{
+    for (auto &tuple : tuples) {
+		tuple->copyLUT(stage);
+    }
+}

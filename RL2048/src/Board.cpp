@@ -144,10 +144,34 @@ int Board::swipeUp() {
                 continue;
             }
             if (at(row, col) == at(row + 1, col)) {
-                score += (at(row, col) *= 2);
+                int merged_value = at(row, col) *= 2;
+				score += merged_value;
                 at(row + 1, col) = 0;
                 merged = true;
                 row++;  // skip the now zero tile
+            
+                // multi-stage
+                switch (stage)
+				{
+				case 0:
+					if (merged_value == 1024)
+						stage++;
+					break;
+				case 1:
+					if (merged_value == 2048)
+						stage++;
+					break;
+				case 2:
+					if (merged_value == 1024)
+						stage++;
+					break;
+				case 3:
+					if (merged_value == 4096)
+						stage++;
+					break;
+				default:
+					break;
+				}
             }
         }
     }

@@ -14,6 +14,8 @@ class Ensemble : public Model {
     void update(const Board &, double) override;
 
 public:
+	void copyLUTs(int stage);
+
     explicit Ensemble(double learning_rate);
 
     ~Ensemble() override = default;
