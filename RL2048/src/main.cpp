@@ -12,14 +12,15 @@
 
 int main(int argc, char *argv[]) {
     // Handle CLI arguments
-    if (argc != 4) {
-        std::cout << "Usage: ./RL2048 epochs learning_rate log_filename" << std::endl;
+    if (argc != 5) {
+        std::cout << "Usage: ./RL2048 epochs learning_rate log_filename save_model_prefix" << std::endl;
         return EXIT_FAILURE;
     }
 
     int epochs = static_cast<int>(std::strtol(argv[1], nullptr, 10));
     auto learning_rate = std::stod(argv[2]);
     char *filename = argv[3];
+    std::string save_prefix = std::string(argv[4]);
 
     // Setup OpenMP
     std::cout << "Available threads: " << omp_get_max_threads() << std::endl;
@@ -30,7 +31,7 @@ int main(int argc, char *argv[]) {
     // Train the model
     int total = 0;
 
-#pragma omp parallel default(none) shared(epochs, model, scoreWriter, std::cout, total)
+#pragma omp parallel default(none) shared(epochs, model, scoreWriter, std::cout, total, save_prefix)
     {
 #pragma omp single
         {
@@ -70,6 +71,10 @@ int main(int argc, char *argv[]) {
 
             if (total % 100 == 0) {
                 std::cout << " " << total << " / " << epochs << std::endl;
+            }
+
+            if (total % 100000 == 0){
+                model.get()->save_model(save_prefix + std::to_string(total) + "_");
             }
         }
     }

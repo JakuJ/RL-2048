@@ -4,6 +4,8 @@
 #include <tuple>
 #include <cmath>
 #include <memory>
+#include <iostream>
+#include <fstream>
 
 #include "Board.hpp"
 #include "Model.hpp"
@@ -17,6 +19,8 @@ class NTuple : public NTupleInterface {
     std::tuple<int, int> indices[N];
 
     int powers[N]{0};
+
+    size_t size;
 
     [[nodiscard]] int address(const Board &) const;
 
@@ -34,11 +38,15 @@ public:
     [[nodiscard]] double apply(const Board &) const override;
 
     void update(const Board &, double) override;
+    
+    void save_model(const std::string path) override;
+
+    void load_model(const std::string path) override;
 };
 
 template<int N>
 NTuple<N>::NTuple(int m, std::tuple<int, int> ixs[N]) {
-    auto size = static_cast<size_t>(std::pow(m, N));
+    size = static_cast<size_t>(std::pow(m, N));
 
     auto weights = new double[size]{0};
     LUT = std::shared_ptr<double>(weights, std::default_delete<double[]>());
@@ -78,4 +86,18 @@ void NTuple<N>::update(const Board &board, double delta) {
 
 #pragma omp atomic
     LUT.get()[index] += delta;
+}
+
+template<int N>
+void NTuple<N>::save_model(const std::string path){
+    std::ofstream out(path, std::ios::out | std::ios::binary);
+    out.write((char *) LUT.get(), size * sizeof(double));
+    out.close();
+}
+
+template<int N>
+void NTuple<N>::load_model(const std::string path){
+    std::ifstream in(path, std::ios::in | std::ios::binary);
+    in.read((char *) LUT.get(), size * sizeof(double));
+    in.close();
 }

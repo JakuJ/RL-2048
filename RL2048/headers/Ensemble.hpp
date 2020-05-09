@@ -13,6 +13,10 @@ class Ensemble : public Model {
 
     void update(const Board &, double) override;
 
+    void save_model(const std::string path) override;
+
+    void load_model(const std::string path) override;
+
 public:
     explicit Ensemble(double learning_rate);
 
