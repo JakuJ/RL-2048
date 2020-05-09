@@ -8,5 +8,7 @@ set -e
     cmake ..
   fi
   make
-  zsh -c "time ./RL2048 $1 $2 ../log.csv"
+
+  mkdir -p "../tuples"
+  zsh -c "time ./RL2048 $1 $2 ../log.csv ../tuples/tuple"
 )

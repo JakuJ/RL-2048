@@ -20,7 +20,7 @@ int main(int argc, char *argv[]) {
     int epochs = static_cast<int>(std::strtol(argv[1], nullptr, 10));
     auto learning_rate = std::stod(argv[2]);
     char *filename = argv[3];
-    std::string save_prefix = std::string(argv[4]);
+    auto save_prefix = std::string(argv[4]);
 
     // Setup OpenMP
     std::cout << "Available threads: " << omp_get_max_threads() << std::endl;
@@ -73,8 +73,9 @@ int main(int argc, char *argv[]) {
                 std::cout << " " << total << " / " << epochs << std::endl;
             }
 
-            if (total % 100000 == 0){
-                model.get()->save_model(save_prefix + std::to_string(total) + "_");
+            // Unsafe
+            if (total % 50000 == 0) {
+                model->save_model(save_prefix + std::to_string(total / 1000) + "k_");
             }
         }
     }

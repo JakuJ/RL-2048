@@ -6,6 +6,7 @@
 #include <memory>
 #include <iostream>
 #include <fstream>
+#include <utility>
 
 #include "Board.hpp"
 #include "Model.hpp"
@@ -38,10 +39,10 @@ public:
     [[nodiscard]] double apply(const Board &) const override;
 
     void update(const Board &, double) override;
-    
-    void save_model(const std::string path) override;
 
-    void load_model(const std::string path) override;
+    void save_model(std::string path) override;
+
+    void load_model(std::string path) override;
 };
 
 template<int N>
@@ -59,6 +60,8 @@ NTuple<N>::NTuple(int m, std::tuple<int, int> ixs[N]) {
 
 template<int N>
 NTuple<N>::NTuple(int m, std::tuple<int, int> ixs[N], std::shared_ptr<double> weights): LUT(std::move(weights)) {
+    size = static_cast<size_t>(std::pow(m, N));
+
     for (int i = 0; i < N; i++) {
         indices[i] = ixs[i];
         powers[i] = std::pow(m, i);
@@ -89,15 +92,15 @@ void NTuple<N>::update(const Board &board, double delta) {
 }
 
 template<int N>
-void NTuple<N>::save_model(const std::string path){
+void NTuple<N>::save_model(const std::string path) {
     std::ofstream out(path, std::ios::out | std::ios::binary);
-    out.write((char *) LUT.get(), size * sizeof(double));
+    out.write(reinterpret_cast<char *>(LUT.get()), size * sizeof(double));
     out.close();
 }
 
 template<int N>
-void NTuple<N>::load_model(const std::string path){
+void NTuple<N>::load_model(const std::string path) {
     std::ifstream in(path, std::ios::in | std::ios::binary);
-    in.read((char *) LUT.get(), size * sizeof(double));
+    in.read(reinterpret_cast<char *>(LUT.get()), size * sizeof(double));
     in.close();
 }

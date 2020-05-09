@@ -51,15 +51,14 @@ void Ensemble::update(const Board &board, double error) {
     }
 }
 
-void Ensemble::save_model(const std::string path){
-    //std::string base = std::to_string(learning_rate) + "/";
-    for(unsigned i = 0; i<tuples.size(); i++){
+void Ensemble::save_model(const std::string path) {
+    for (size_t i = 0; i < tuples.size(); i++) {
         tuples[i]->save_model(path + std::to_string(i));
     }
 }
 
-void Ensemble::load_model(const std::string path){
-    for(unsigned i = 0; i<tuples.size(); i++){
+void Ensemble::load_model(const std::string path) {
+    for (size_t i = 0; i < tuples.size(); i++) {
         tuples[i]->load_model(path + std::to_string(i));
     }
 }
