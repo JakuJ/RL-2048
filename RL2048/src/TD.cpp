@@ -8,7 +8,7 @@ void learn(Model *model, double s1Val, const Board &s1, const Board &s2) {
         double bestValue = std::numeric_limits<double>::lowest();
 
         for (int action : actions) {
-            auto[s3, r] = s2.move(action);
+            auto[s3, r] = s2.swipe(action);
             bestValue = std::max(bestValue, r + model->apply(s3));
         }
 
@@ -32,7 +32,7 @@ std::tuple<Board, int> playGame(Model *model) {
 
         double bestValue = std::numeric_limits<double>::lowest();
         for (int action : actions) {
-            auto[b, r] = s.move(action);
+            auto[b, r] = s.swipe(action);
 
             double utility = model->apply(b);
             double value = static_cast<double>(r) + utility;

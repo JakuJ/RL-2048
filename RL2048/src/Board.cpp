@@ -1,4 +1,3 @@
-#include <cassert>
 #include <iostream>
 #include <algorithm>
 #include "../headers/Board.hpp"
@@ -159,7 +158,7 @@ int Board::swipeUp() {
     return score;
 }
 
-std::tuple<Board, int> Board::move(int direction) const {
+std::tuple<Board, int> Board::swipe(const int direction) const {
     Board b(*this);
 
     for (int i = 0; i < direction; i++) {

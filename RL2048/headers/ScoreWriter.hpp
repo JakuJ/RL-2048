@@ -8,7 +8,5 @@ class ScoreWriter {
 public:
     explicit ScoreWriter(const char *filename);
 
-    ~ScoreWriter();
-
     void log(int score, int maxTile);
 };

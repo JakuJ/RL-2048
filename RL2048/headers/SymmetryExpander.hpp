@@ -4,6 +4,7 @@
 #include <tuple>
 #include <memory>
 #include <algorithm>
+#include <array>
 #include "NTuple.hpp"
 #include "NTupleInterface.hpp"
 
@@ -14,7 +15,7 @@ class SymmetryExpander {
 
 public:
     template<int N>
-    static std::vector<NTupleInterface *> expand(int, std::tuple<int, int>[N]);
+    static std::vector<std::unique_ptr<NTupleInterface>> expand(int, std::tuple<int, int>[N]);
 };
 
 std::vector<std::tuple<int, int>> SymmetryExpander::getSymmetries(std::tuple<int, int> position) {
@@ -34,7 +35,7 @@ std::vector<std::tuple<int, int>> SymmetryExpander::getSymmetries(std::tuple<int
 }
 
 template<int N>
-std::vector<NTupleInterface *> SymmetryExpander::expand(int m, std::tuple<int, int> indices[N]) {
+std::vector<std::unique_ptr<NTupleInterface>> SymmetryExpander::expand(int m, std::tuple<int, int> indices[N]) {
     std::vector<std::array<std::tuple<int, int>, N>> symIndices(numSymmetries);
 
     for (int i = 0; i < N; i++) {
@@ -45,7 +46,7 @@ std::vector<NTupleInterface *> SymmetryExpander::expand(int m, std::tuple<int, i
         }
     }
 
-    std::vector < NTupleInterface * > ret;
+    std::vector<std::unique_ptr<NTupleInterface>> ret;
     ret.reserve(numSymmetries);
 
     auto size = static_cast<size_t>(std::pow(m, N));
@@ -53,8 +54,8 @@ std::vector<NTupleInterface *> SymmetryExpander::expand(int m, std::tuple<int, i
     auto weights = new double[size]{0};
     auto LUT = std::shared_ptr<double>(weights, std::default_delete<double[]>());
 
-    for (auto ixs : symIndices) {
-        ret.push_back(new NTuple<N>(m, ixs.begin(), LUT));
+    for (auto &ixs : symIndices) {
+        ret.emplace_back(new NTuple<N>(m, ixs.begin(), LUT));
     }
     return ret;
 }

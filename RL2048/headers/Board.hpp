@@ -4,6 +4,8 @@
 #include <vector>
 #include <tuple>
 
+#define ALWAYS_INLINE __attribute__((always_inline))
+
 class Board {
 
 public:
@@ -31,11 +33,11 @@ public:
 
     // Indexing
 
-    [[nodiscard]] inline __attribute__((always_inline)) int &at(int row, int column) {
+    [[nodiscard]] inline ALWAYS_INLINE int &at(int row, int column) {
         return matrix[row * size + column];
     }
 
-    [[nodiscard]] inline __attribute__((always_inline)) const int &at(int row, int column) const {
+    [[nodiscard]] inline ALWAYS_INLINE const int &at(int row, int column) const {
         return matrix[row * size + column];
     }
 
@@ -45,7 +47,7 @@ public:
 
     // Actions
 
-    [[nodiscard]] std::tuple<Board, int> move(int) const;
+    [[nodiscard]] std::tuple<Board, int> swipe(int) const;
 
     [[nodiscard]] std::vector<int> possibleMoves() const;
 

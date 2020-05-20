@@ -22,8 +22,9 @@ int main(int argc, char *argv[]) {
     char *filename = argv[3];
     auto save_prefix = std::string(argv[4]);
 
-    // Setup OpenMP
+    // Probe OpenMP
     std::cout << "Available threads: " << omp_get_max_threads() << std::endl;
+
     // Initialize the model
     std::unique_ptr<Model> model = std::make_unique<Ensemble>(learning_rate);
     ScoreWriter scoreWriter(filename);
@@ -40,12 +41,14 @@ int main(int argc, char *argv[]) {
 
 #pragma omp for schedule(dynamic) nowait
         for (int epoch = 1; epoch <= epochs; epoch++) {
-            auto[board, score] = playGame(model.get());
+            const auto&&[board, score] = playGame(model.get());
 
             const int max = *std::max_element(board.cbegin(), board.cend());
+            const int score2 = score; // hack
 
 #pragma omp critical
             {
+                scoreWriter.log(score2, max);
                 switch (max) {
                     case 2048:
                         std::cout << GREEN << "█" << RESET;
@@ -63,7 +66,6 @@ int main(int argc, char *argv[]) {
                         std::cout << " ";
                         break;
                 }
-                scoreWriter.log(score, max);
             }
 
 #pragma omp atomic

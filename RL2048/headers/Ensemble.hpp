@@ -10,16 +10,14 @@ class Ensemble : public Model {
 
     std::vector<std::unique_ptr<NTupleInterface>> tuples;
 
-    [[nodiscard]] double apply(const Board &board) const override;
-
-    void update(const Board &, double) override;
-
-    void save_model(std::string path) override;
-
-    void load_model(std::string path) override;
-
 public:
     explicit Ensemble(double learning_rate);
 
-    ~Ensemble() override = default;
+    void update(const Board &, double) override;
+
+    void save_model(const std::string &path) const override;
+
+    void load_model(const std::string &path) override;
+
+    [[nodiscard]] double apply(const Board &board) const override;
 };
