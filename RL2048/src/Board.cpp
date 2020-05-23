@@ -5,6 +5,7 @@
 
 Board::Board() {
     addRandom();
+    addRandom();
 }
 
 Board::Board(const Board &other) {
