@@ -3,22 +3,6 @@
 #include "../headers/Board.hpp"
 #include "../headers/Random.hpp"
 
-Board::Board() {
-    addRandom();
-    addRandom();
-}
-
-Board::Board(const Board &other) {
-    std::copy(other.cbegin(), other.cend(), std::begin(matrix));
-}
-
-Board &Board::operator=(const Board &other) {
-    if (this != &other) {
-        std::copy(other.cbegin(), other.cend(), std::begin(matrix));
-    }
-    return *this;
-}
-
 const int *Board::cbegin() const {
     return std::cbegin(matrix);
 }
@@ -44,12 +28,13 @@ void Board::rotateLeft() {
 }
 
 void Board::addRandom() {
-    int pos;
-    do {
-        pos = random(size * size);
-    } while (matrix[pos] != 0);
-
-    matrix[pos] = random(10) ? 2 : 4;
+    for (;;) {
+        int pos = random(size * size);
+        if (matrix[pos] == 0) {
+            matrix[pos] = random(10) ? 2 : 4;
+            break;
+        }
+    }
 }
 
 std::vector<int> Board::possibleMoves() const {
@@ -117,8 +102,7 @@ void Board::slideUp() {
         int count = 0;
 
         for (int row = 0; row < size; row++) {
-            int val = at(row, col);
-            if (val != 0) {
+            if (const int val = at(row, col); val != 0) {
                 if (count != row) {
                     at(count, col) = val;
                 }
@@ -140,12 +124,11 @@ int Board::swipeUp() {
     // merging
     for (int col = 0; col < size; col++) {
         for (int row = 0; row < size - 1; row++) {
-            if (at(row, col) == 0) {
+            if (int &here = at(row, col); here == 0) {
                 continue;
-            }
-            if (at(row, col) == at(row + 1, col)) {
-                score += (at(row, col) *= 2);
-                at(row + 1, col) = 0;
+            } else if (int &there = at(row + 1, col); here == there) {
+                score += (here *= 2);
+                there = 0;
                 merged = true;
                 row++;  // skip the now zero tile
             }
@@ -159,17 +142,17 @@ int Board::swipeUp() {
     return score;
 }
 
-std::tuple<Board, int> Board::swipe(const int direction) const {
+std::tuple<Board, int> Board::swipe(int direction) const {
     Board b(*this);
 
-    for (int i = 0; i < direction; i++) {
+    for (int i = 0; i < direction; ++i) {
         b.rotateLeft();
     }
 
     int score = b.swipeUp();
 
     if (direction != 0) {
-        for (int i = 0; i < 4 - direction; i++) {
+        for (int i = 0; i < 4 - direction; ++i) {
             b.rotateLeft();
         }
     }
@@ -177,11 +160,11 @@ std::tuple<Board, int> Board::swipe(const int direction) const {
 }
 
 std::ostream &operator<<(std::ostream &os, const Board &board) {
-    for (int i = 0; i < Board::size; i++) {
-        for (int j = 0; j < Board::size; j++) {
+    for (int i = 0; i < Board::size; ++i) {
+        for (int j = 0; j < Board::size; ++j) {
             os << board.at(i, j) << " ";
         }
-        os << std::endl;
+        os << '\n';
     }
     return os;
 }

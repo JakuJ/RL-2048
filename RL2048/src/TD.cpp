@@ -1,14 +1,14 @@
 #include "../headers/TD.hpp"
 
 void learn(Model *model, double s1Val, const Board &s1, const Board &s2) {
-    auto actions = s2.possibleMoves();
+    const auto actions = s2.possibleMoves();
     if (actions.empty()) {
         model->update(s1, -s1Val);
     } else {
         double bestValue = std::numeric_limits<double>::lowest();
 
         for (int action : actions) {
-            auto[s3, r] = s2.swipe(action);
+            const auto&&[s3, r] = s2.swipe(action);
             bestValue = std::max(bestValue, r + model->apply(s3));
         }
 
@@ -18,10 +18,13 @@ void learn(Model *model, double s1Val, const Board &s1, const Board &s2) {
 
 std::tuple<Board, int> playGame(Model *model) {
     int score = 0;
-    Board s;
 
-    while (true) {
-        auto actions = s.possibleMoves();
+    Board s;
+    s.addRandom();
+    s.addRandom();
+
+    for (;;) {
+        const auto actions = s.possibleMoves();
         if (actions.empty()) {
             break;
         }
@@ -32,10 +35,10 @@ std::tuple<Board, int> playGame(Model *model) {
 
         double bestValue = std::numeric_limits<double>::lowest();
         for (int action : actions) {
-            auto[b, r] = s.swipe(action);
+            const auto&&[b, r] = s.swipe(action);
 
-            double utility = model->apply(b);
-            double value = static_cast<double>(r) + utility;
+            const double utility = model->apply(b);
+            const double value = static_cast<double>(r) + utility;
 
             if (value >= bestValue) {
                 bestValue = value;
@@ -45,13 +48,12 @@ std::tuple<Board, int> playGame(Model *model) {
             }
         }
 
-        Board s2(s1);
-        s2.addRandom();
+        s = s1;  // s is s2
+        s.addRandom();
 
-        learn(model, s1_val, s1, s2);
+        learn(model, s1_val, s1, s);
 
         score += reward;
-        s = s2;
     }
 
     return std::make_tuple(s, score);

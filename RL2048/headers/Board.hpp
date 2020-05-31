@@ -12,7 +12,7 @@ public:
     static constexpr int size = 4;
 
 private:
-    int matrix[size * size] = {0};
+    int matrix[size * size]{0};
 
     void slideUp();
 
@@ -21,16 +21,6 @@ private:
     void rotateLeft();
 
 public:
-    Board();
-
-    Board(const Board &);
-
-    Board(Board &&) = delete;
-
-    Board &operator=(const Board &);
-
-    Board &operator=(Board &&) = delete;
-
     // Indexing
 
     [[nodiscard]] inline ALWAYS_INLINE int &at(int row, int column) {

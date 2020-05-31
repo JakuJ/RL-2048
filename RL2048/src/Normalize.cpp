@@ -8,6 +8,6 @@ static inline unsigned int fast_log2(const unsigned int x) {
     return y;
 }
 
-int normalize(int x) {
+int normalize(const int x) {
     return x ? static_cast<int>(fast_log2(x)) : 0;
 }

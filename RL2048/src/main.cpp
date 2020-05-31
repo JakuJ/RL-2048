@@ -17,10 +17,10 @@ int main(int argc, char *argv[]) {
         return EXIT_FAILURE;
     }
 
-    int epochs = static_cast<int>(std::strtol(argv[1], nullptr, 10));
-    auto learning_rate = std::stod(argv[2]);
-    char *filename = argv[3];
-    auto save_prefix = std::string(argv[4]);
+    const int epochs = static_cast<int>(std::strtol(argv[1], nullptr, 10));
+    const auto learning_rate = std::stod(argv[2]);
+    const char *filename = argv[3];
+    const auto save_prefix = std::string(argv[4]);
 
     // Probe OpenMP
     std::cout << "Available threads: " << omp_get_max_threads() << std::endl;
@@ -60,7 +60,7 @@ int main(int argc, char *argv[]) {
                         std::cout << RED << "█" << RESET;
                         break;
                     case 16384:
-                        std::cout << std::endl << RED << "** 16K **" << RESET << std::endl;
+                        std::cout << '\n' << RED << "** 16K **" << RESET << '\n';
                         break;
                     default:
                         std::cout << " ";
@@ -72,10 +72,10 @@ int main(int argc, char *argv[]) {
             total++;
 
             if (total % 100 == 0) {
-                std::cout << " " << total << " / " << epochs << std::endl;
+                std::cout << " " << total << " / " << epochs << '\n';
             }
 
-            // Unsafe
+            // Unsafe?
             if (total % 50000 == 0) {
                 model->save_model(save_prefix + std::to_string(total / 1000) + "k_");
             }

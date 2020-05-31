@@ -9,7 +9,7 @@
 #include "NTupleInterface.hpp"
 
 class SymmetryExpander {
-    static const int numSymmetries = 8;
+    static constexpr int numSymmetries = 8;
 
     static std::vector<std::tuple<int, int>> getSymmetries(std::tuple<int, int> position);
 
@@ -20,17 +20,17 @@ public:
 
 std::vector<std::tuple<int, int>> SymmetryExpander::getSymmetries(std::tuple<int, int> position) {
     const auto[r, c] = position;
-    const int M = Board::size - 1;
+    constexpr int M = Board::size - 1;
 
     return std::vector<std::tuple<int, int>>{
-            std::make_tuple(c, r),
-            std::make_tuple(c, M - r),
-            std::make_tuple(M - c, r),
-            std::make_tuple(M - c, M - r),
-            std::make_tuple(r, c),
-            std::make_tuple(r, M - c),
-            std::make_tuple(M - r, c),
-            std::make_tuple(M - r, M - c)
+            {c,     r},
+            {c,     M - r},
+            {M - c, r},
+            {M - c, M - r},
+            {r,     c},
+            {r,     M - c},
+            {M - r, c},
+            {M - r, M - c}
     };
 }
 
@@ -51,10 +51,9 @@ std::vector<std::unique_ptr<NTupleInterface>> SymmetryExpander::expand(int m, st
 
     auto size = static_cast<size_t>(std::pow(m, N));
 
-    auto weights = new double[size]{0};
-    auto LUT = std::shared_ptr<double>(weights, std::default_delete<double[]>());
+    auto LUT = std::shared_ptr<double>(new double[size]{0}, std::default_delete<double[]>());
 
-    for (auto &ixs : symIndices) {
+    for (auto &&ixs : symIndices) {
         ret.emplace_back(new NTuple<N>(m, ixs.begin(), LUT));
     }
     return ret;

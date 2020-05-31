@@ -4,10 +4,10 @@
 #include <numeric>
 
 Ensemble::Ensemble(double lr) : learning_rate(lr) {
-    static constexpr int m = 15;
+    constexpr int m = 15;
     tuples.reserve(17);
 
-    for (int i = 0; i < Board::size; i++) {
+    for (int i = 0; i < Board::size; ++i) {
         std::tuple<int, int> row[4] = {{0, i},
                                        {1, i},
                                        {2, i},
@@ -22,8 +22,8 @@ Ensemble::Ensemble(double lr) : learning_rate(lr) {
         tuples.emplace_back(new NTuple<4>{m, column});
     }
 
-    for (int i = 0; i < Board::size - 1; i++) {
-        for (int j = 0; j < Board::size - 1; j++) {
+    for (int i = 0; i < Board::size - 1; ++i) {
+        for (int j = 0; j < Board::size - 1; ++j) {
             std::tuple<int, int> square[4] = {
                     {i,     j},
                     {i + 1, j},
@@ -35,8 +35,8 @@ Ensemble::Ensemble(double lr) : learning_rate(lr) {
         }
     }
 
-    for (int i = 0; i < 2; i++) {
-        for (int j = 0; j < 3; j++) {
+    for (int i = 0; i < 2; ++i) {
+        for (int j = 0; j < 3; ++j) {
             std::tuple<int, int> rectangle[6]{{i,     j},
                                               {i,     j + 1},
                                               {i + 1, j},
@@ -48,8 +48,8 @@ Ensemble::Ensemble(double lr) : learning_rate(lr) {
         }
     }
 
-    for (int i = 0; i < 3; i++) {
-        for (int j = 0; j < 2; j++) {
+    for (int i = 0; i < 3; ++i) {
+        for (int j = 0; j < 2; ++j) {
             std::tuple<int, int> rectangle[6]{{i,     j},
                                               {i + 1, j},
                                               {i,     j + 1},
@@ -61,8 +61,8 @@ Ensemble::Ensemble(double lr) : learning_rate(lr) {
         }
     }
 
-    for (int i = 0; i < 3; i++) {
-        for (int j = 0; j < 4; j++) {
+    for (int i = 0; i < 3; ++i) {
+        for (int j = 0; j < 4; ++j) {
             std::tuple<int, int> mini_col[2]{{i,     j},
                                              {i + 1, j}};
             std::tuple<int, int> mini_row[2]{{j, i},
@@ -75,7 +75,7 @@ Ensemble::Ensemble(double lr) : learning_rate(lr) {
 }
 
 double Ensemble::apply(const Board &board) const {
-    return std::accumulate(tuples.cbegin(), tuples.cend(), 0.0, [&board](double &acc, const auto &tuple) {
+    return std::accumulate(tuples.cbegin(), tuples.cend(), 0.0, [&board](auto acc, const auto &tuple) {
         return acc + tuple->apply(board);
     });
 }
@@ -83,9 +83,9 @@ double Ensemble::apply(const Board &board) const {
 void Ensemble::update(const Board &board, double error) {
     const double delta = learning_rate * error;
 
-    for (auto &tuple : tuples) {
-        tuple->update(board, delta);
-    }
+    std::for_each(tuples.begin(), tuples.end(), [&](auto &&t) {
+        t->update(board, delta);
+    });
 }
 
 void Ensemble::save_model(const std::string &path) const {
