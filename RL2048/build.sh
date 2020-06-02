@@ -1,9 +1,10 @@
 #!/bin/bash
 set -e
 (
+  mkdir -p cmake-build-debug
   cd cmake-build-debug
   if [ "$(uname -s)" == 'Darwin' ]; then
-    cmake -DCMAKE_CXX_COMPILER=g++-9 ..
+    cmake -DCMAKE_CXX_COMPILER=clang++ ..
   else
     cmake ..
   fi

@@ -1,3 +1,5 @@
+#include "../headers/Normalize.hpp"
+
 // Benchmarked to be about 66% faster than std::log2 from <cmath>
 static inline unsigned int fast_log2(const unsigned int x) {
     unsigned int y;

@@ -3,4 +3,4 @@
 #include <tuple>
 #include "Board.hpp"
 
-int normalize(int x);
+int normalize(const int x);
