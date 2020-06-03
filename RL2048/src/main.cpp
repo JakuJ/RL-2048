@@ -43,7 +43,7 @@ int main(int argc, char *argv[]) {
         for (int epoch = 1; epoch <= epochs; epoch++) {
             const auto&&[board, score] = playGame(model.get());
 
-            const int max = *std::max_element(board.cbegin(), board.cend());
+            const int max = board.max_tile();
             const int score2 = score; // hack
 
 #pragma omp critical

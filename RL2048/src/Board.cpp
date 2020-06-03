@@ -3,18 +3,6 @@
 #include "../headers/Board.hpp"
 #include "../headers/Random.hpp"
 
-Board::Board() {
-    std::fill(matrix.begin(), matrix.end(), zero_tile);
-}
-
-const int *Board::cbegin() const {
-    return std::cbegin(matrix);
-}
-
-const int *Board::cend() const {
-    return std::cend(matrix);
-}
-
 void Board::rotateLeft() {
     // transpose
     std::swap(matrix[1], matrix[4]);
@@ -49,8 +37,8 @@ std::array<bool, 4> Board::possibleMoves() const {
 
     for (int row = 0; row < size; row++) {
         for (int col = 0; col < size - 1; col++) {
-            int left = at(row, col);
-            int right = at(row, col + 1);
+            const int left = at(row, col);
+            const int right = at(row, col + 1);
 
             if (left == right && left != zero_tile) {
                 can_left = can_right = true;
@@ -66,8 +54,8 @@ std::array<bool, 4> Board::possibleMoves() const {
 
     for (int col = 0; col < size; col++) {
         for (int row = 0; row < size - 1; row++) {
-            int upper = at(row, col);
-            int lower = at(row + 1, col);
+            const int upper = at(row, col);
+            const int lower = at(row + 1, col);
 
             if (upper == lower && upper != zero_tile) {
                 can_up = can_down = true;

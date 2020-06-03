@@ -1,6 +1,6 @@
 #include "../headers/TD.hpp"
 
-void learn(Model *model, double s1Val, const Board &s1, const Board &s2) {
+static void learn(Model *model, double s1Val, const Board &s1, const Board &s2) {
     const auto actions = s2.possibleMoves();
     if (std::none_of(actions.cbegin(), actions.cend(), [](auto x) { return x; })) {
         model->update(s1, -s1Val);
