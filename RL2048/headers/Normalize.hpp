@@ -3,4 +3,6 @@
 #include <tuple>
 #include "Board.hpp"
 
-int normalize(const int x);
+static constexpr int normalize(const int x) {
+    return 8 * sizeof(int) - __builtin_clz(x) - 1; 
+}

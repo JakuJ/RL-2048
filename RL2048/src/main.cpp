@@ -63,7 +63,7 @@ int main(int argc, char *argv[]) {
                         std::cout << '\n' << RED << "** 16K **" << RESET << '\n';
                         break;
                     default:
-                        std::cout << " ";
+                        std::cout << ' ';
                         break;
                 }
             }
@@ -72,7 +72,7 @@ int main(int argc, char *argv[]) {
             total++;
 
             if (total % 100 == 0) {
-                std::cout << " " << total << " / " << epochs << '\n';
+                std::cout << ' ' << total << " / " << epochs << '\n';
             }
 
             // Unsafe?

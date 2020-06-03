@@ -3,6 +3,10 @@
 #include "../headers/Board.hpp"
 #include "../headers/Random.hpp"
 
+Board::Board() {
+    std::fill(matrix.begin(), matrix.end(), zero_tile);
+}
+
 const int *Board::cbegin() const {
     return std::cbegin(matrix);
 }
@@ -30,70 +34,51 @@ void Board::rotateLeft() {
 void Board::addRandom() {
     for (;;) {
         int pos = random(size * size);
-        if (matrix[pos] == 0) {
+        if (matrix[pos] == zero_tile) {
             matrix[pos] = random(10) ? 2 : 4;
             break;
         }
     }
 }
 
-std::vector<int> Board::possibleMoves() const {
-    std::vector<int> possible;
-    possible.reserve(4);
-
-    bool can_left = false, can_right = false;
+// An array of 4 booleans is represented as an 32-bit integer starting at optimization level 2
+// https://godbolt.org/z/CvbUad
+std::array<bool, 4> Board::possibleMoves() const {
+    std::array<bool, 4> possible{};
+    auto&[can_up, can_right, can_down, can_left] = possible;
 
     for (int row = 0; row < size; row++) {
         for (int col = 0; col < size - 1; col++) {
             int left = at(row, col);
             int right = at(row, col + 1);
 
-            if (left == right && left != 0) {
+            if (left == right && left != zero_tile) {
                 can_left = can_right = true;
                 goto up_down;
             }
 
-            can_left |= left == 0 && right != 0;
-            can_right |= right == 0 && left != 0;
+            can_left |= left == zero_tile && right != zero_tile;
+            can_right |= right == zero_tile && left != zero_tile;
         }
     }
 
     up_down:
-
-    if (can_left) {
-        possible.push_back(3);
-    }
-
-    if (can_right) {
-        possible.push_back(1);
-    }
-
-    bool can_up = false, can_down = false;
 
     for (int col = 0; col < size; col++) {
         for (int row = 0; row < size - 1; row++) {
             int upper = at(row, col);
             int lower = at(row + 1, col);
 
-            if (upper == lower && upper != 0) {
+            if (upper == lower && upper != zero_tile) {
                 can_up = can_down = true;
                 goto finish;
             }
-            can_up |= upper == 0 && lower != 0;
-            can_down |= lower == 0 && upper != 0;
+            can_up |= upper == zero_tile && lower != zero_tile;
+            can_down |= lower == zero_tile && upper != zero_tile;
         }
     }
 
     finish:
-
-    if (can_up) {
-        possible.push_back(0);
-    }
-
-    if (can_down) {
-        possible.push_back(2);
-    }
-
     return possible;
 }
 
@@ -102,7 +87,7 @@ void Board::slideUp() {
         int count = 0;
 
         for (int row = 0; row < size; row++) {
-            if (const int val = at(row, col); val != 0) {
+            if (const int val = at(row, col); val != zero_tile) {
                 if (count != row) {
                     at(count, col) = val;
                 }
@@ -111,7 +96,7 @@ void Board::slideUp() {
         }
 
         while (count < size) {
-            at(count++, col) = 0;
+            at(count++, col) = zero_tile;
         }
     }
 }
@@ -124,11 +109,11 @@ int Board::swipeUp() {
     // merging
     for (int col = 0; col < size; col++) {
         for (int row = 0; row < size - 1; row++) {
-            if (int &here = at(row, col); here == 0) {
+            if (int &here = at(row, col); here == zero_tile) {
                 continue;
             } else if (int &there = at(row + 1, col); here == there) {
                 score += (here *= 2);
-                there = 0;
+                there = zero_tile;
                 merged = true;
                 row++;  // skip the now zero tile
             }
