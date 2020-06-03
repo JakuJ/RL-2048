@@ -86,10 +86,7 @@ double NTuple<N>::apply(const Board &board) const {
 
 template<int N>
 void NTuple<N>::update(const Board &board, double delta) {
-    int index = address(board);
-
-#pragma omp atomic
-    LUT.get()[index] += delta;
+    LUT.get()[address(board)] += delta;
 }
 
 template<int N>
