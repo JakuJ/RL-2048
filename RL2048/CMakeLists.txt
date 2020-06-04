@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.9)
 project(RL2048 LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 17)
 
-add_compile_options("-Wall" "-pedantic" "-Ofast" "-march=native" "-fomit-frame-pointer")
+add_compile_options("-Wall" "-pedantic" "-Ofast" "-march=native" "-flto" "-fomit-frame-pointer")
 
 find_package(OpenMP REQUIRED)
 

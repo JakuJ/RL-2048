@@ -31,3 +31,5 @@ _deps
 RL2048/RL2048
 RL2048/tuples/
 *.csv
+RL2048/cmake-build-release
+RL2048/wykres.py

@@ -17,6 +17,8 @@ int main(int argc, char *argv[]) {
         return EXIT_FAILURE;
     }
 
+    std::ios_base::sync_with_stdio(false);
+
     const int epochs = static_cast<int>(std::strtol(argv[1], nullptr, 10));
     const auto learning_rate = std::stod(argv[2]);
     const char *filename = argv[3];
@@ -51,16 +53,16 @@ int main(int argc, char *argv[]) {
                 scoreWriter.log(score2, max);
                 switch (max) {
                     case 2048:
-                        std::cout << GREEN << "█" << RESET;
+                        std::cout << GREEN "█" RESET;
                         break;
                     case 4096:
-                        std::cout << BLUE << "█" << RESET;
+                        std::cout << BLUE "█" RESET;
                         break;
                     case 8192:
-                        std::cout << RED << "█" << RESET;
+                        std::cout << RED "█" RESET;
                         break;
                     case 16384:
-                        std::cout << '\n' << RED << "** 16K **" << RESET << '\n';
+                        std::cout << "\n" RED "** 16K **" RESET "\n";
                         break;
                     default:
                         std::cout << ' ';
@@ -73,11 +75,11 @@ int main(int argc, char *argv[]) {
 
             if (total % 100 == 0) {
                 std::cout << ' ' << total << " / " << epochs << '\n';
-            }
 
-            // Unsafe?
-            if (total % 50000 == 0) {
-                model->save_model(save_prefix + std::to_string(total / 1000) + "k_");
+                // Unsafe?
+                if (total % 50000 == 0) {
+                    model->save_model(save_prefix + std::to_string(total / 1000) + "k_");
+                }
             }
         }
     }

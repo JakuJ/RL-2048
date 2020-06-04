@@ -1,10 +1,10 @@
 #!/bin/bash
 set -e
 (
-  mkdir -p cmake-build-debug
-  cd cmake-build-debug
+  mkdir -p cmake-build-release
+  cd cmake-build-release
 
-  cmake ..
+  cmake -DCMAKE_CXX_COMPILER=clang++ ..
   make -j4
 
   mkdir -p "../tuples"

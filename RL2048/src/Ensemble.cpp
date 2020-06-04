@@ -75,7 +75,7 @@ Ensemble::Ensemble(double lr) : learning_rate(lr) {
 }
 
 double Ensemble::apply(const Board &board) const {
-    return std::accumulate(tuples.cbegin(), tuples.cend(), 0.0, [&board](auto acc, const auto &tuple) {
+    return std::accumulate(tuples.cbegin(), tuples.cend(), 0.0, [&board](double acc, const auto &tuple) {
         return acc + tuple->apply(board);
     });
 }
@@ -83,7 +83,7 @@ double Ensemble::apply(const Board &board) const {
 void Ensemble::update(const Board &board, double error) {
     const double delta = learning_rate * error;
 
-    std::for_each(tuples.begin(), tuples.end(), [&](auto &&t) {
+    std::for_each(tuples.begin(), tuples.end(), [&](auto &t) {
         t->update(board, delta);
     });
 }

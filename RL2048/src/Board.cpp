@@ -1,7 +1,14 @@
 #include <iostream>
 #include <algorithm>
 #include "../headers/Board.hpp"
-#include "../headers/Random.hpp"
+
+template<unsigned int max>
+static unsigned int fast_rand() {
+    static_assert((max & (max - 1)) == 0, "MAX must be a power of two");
+    thread_local static unsigned int seed = 1337;
+    seed = 214013 * seed + 2531011;
+    return (seed >> 16u) & 0x7FFF & (max - 1);
+}
 
 void Board::rotateLeft() {
     // transpose
@@ -21,9 +28,9 @@ void Board::rotateLeft() {
 
 void Board::addRandom() {
     for (;;) {
-        int pos = random(size * size);
+        unsigned int pos = fast_rand<size * size>();
         if (matrix[pos] == zero_tile) {
-            matrix[pos] = random(10) ? 2 : 4;
+            matrix[pos] = 2 + 2 * (fast_rand<1024>() < 103);  // approx. 10% chance to get a 4-tile
             break;
         }
     }

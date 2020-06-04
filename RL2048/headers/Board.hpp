@@ -7,7 +7,7 @@
 class Board {
 
 public:
-    static constexpr int size = 4;
+    static constexpr unsigned int size = 4;
     static constexpr int zero_tile{1};
 
 private:
