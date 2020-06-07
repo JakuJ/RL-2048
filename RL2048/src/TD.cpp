@@ -58,9 +58,9 @@ std::tuple<Board, int> playGame(Model *model) {
 
         learn(model, s1_val, s1, s);
 
-        Ensemble* ensemble = dynamic_cast<Ensemble*>(model);
-		
-		ensemble->copyLUTs(s1.stage);
+        Ensemble *ensemble = dynamic_cast<Ensemble *>(model);
+
+        ensemble->copyLUTs(s1.stage);
 
         score += reward;
     }

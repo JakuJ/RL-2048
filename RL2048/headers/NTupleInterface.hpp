@@ -6,5 +6,5 @@
 struct NTupleInterface : public Model {
     ~NTupleInterface() override = default;
 
-    void copyLUT(int stage){};
+    virtual void copyLUT(int stage) {}
 };

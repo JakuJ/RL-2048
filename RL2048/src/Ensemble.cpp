@@ -100,9 +100,8 @@ void Ensemble::load_model(const std::string &path) {
     }
 }
 
-void Ensemble::copyLUTs(int stage)
-{
+void Ensemble::copyLUTs(int stage) {
     for (auto &tuple : tuples) {
-		tuple->copyLUT(stage);
+        tuple->copyLUT(stage);
     }
 }
