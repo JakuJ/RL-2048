@@ -127,10 +127,11 @@ int Board::swipeUp() {
                         if (merged_value == 1024)
                             stage++;
                         break;
-                    case 3:
-                        if (merged_value == 4096)
-                            stage++;
-                        break;
+// SEGFAULT po przejściu na stage 4
+//                    case 3:
+//                        if (merged_value == 4096)
+//                            stage++;
+//                        break;
                     default:
                         break;
                 }
