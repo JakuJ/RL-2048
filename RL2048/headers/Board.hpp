@@ -1,18 +1,19 @@
 #pragma once
 
 #include <ostream>
-#include <vector>
+#include <array>
 #include <tuple>
 
 class Board {
 
 public:
-    static constexpr int size = 4;
+    static constexpr unsigned int size = 4;
+    static constexpr int zero_tile{1};
 
 	int stage = 0;
 
 private:
-    int matrix[size * size] = {0};
+    std::array<int, size * size> matrix{};
 
     void slideUp();
 
@@ -21,35 +22,29 @@ private:
     void rotateLeft();
 
 public:
-    Board();
-
-    Board(const Board &);
-
-    Board(Board &&) = delete;
-
-    Board &operator=(const Board &);
-
-    Board &operator=(Board &&) = delete;
+    Board() {
+        matrix.fill(zero_tile);
+    }
 
     // Indexing
 
-    [[nodiscard]] inline __attribute__((always_inline)) int &at(int row, int column) {
+    [[nodiscard]] [[gnu::always_inline]] constexpr int &at(int row, int column) {
         return matrix[row * size + column];
     }
 
-    [[nodiscard]] inline __attribute__((always_inline)) const int &at(int row, int column) const {
+    [[nodiscard]] [[gnu::always_inline]] constexpr int const &at(int row, int column) const {
         return matrix[row * size + column];
     }
 
-    [[nodiscard]] const int *cbegin() const;
-
-    [[nodiscard]] const int *cend() const;
+    [[nodiscard]] int max_tile() const {
+        return *std::max_element(matrix.cbegin(), matrix.cend());
+    }
 
     // Actions
 
-    [[nodiscard]] std::tuple<Board, int> move(int) const;
+    [[nodiscard]] std::tuple<Board, int> swipe(int) const;
 
-    [[nodiscard]] std::vector<int> possibleMoves() const;
+    [[nodiscard]] std::array<bool, 4> possibleMoves() const;
 
     void addRandom();
 

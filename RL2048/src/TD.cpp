@@ -1,16 +1,18 @@
 #include "../headers/TD.hpp"
 #include "../headers/Ensemble.hpp"
 
-void learn(Model *model, double s1Val, const Board &s1, const Board &s2) {
-    auto actions = s2.possibleMoves();
-    if (actions.empty()) {
+static void learn(Model *model, double s1Val, const Board &s1, const Board &s2) {
+    const auto actions = s2.possibleMoves();
+    if (std::none_of(actions.cbegin(), actions.cend(), [](auto x) { return x; })) {
         model->update(s1, -s1Val);
     } else {
         double bestValue = std::numeric_limits<double>::lowest();
 
-        for (int action : actions) {
-            auto[s3, r] = s2.move(action);
-            bestValue = std::max(bestValue, r + model->apply(s3));
+        for (int i = 0; i < actions.size(); ++i) {
+            if (actions[i]) {
+                const auto&&[s3, r] = s2.swipe(i);
+                bestValue = std::max(bestValue, r + model->apply(s3));
+            }
         }
 
         model->update(s1, bestValue - s1Val);
@@ -19,11 +21,14 @@ void learn(Model *model, double s1Val, const Board &s1, const Board &s2) {
 
 std::tuple<Board, int> playGame(Model *model) {
     int score = 0;
-    Board s;
 
-    while (true) {
-        auto actions = s.possibleMoves();
-        if (actions.empty()) {
+    Board s;
+    s.addRandom();
+    s.addRandom();
+
+    for (;;) {
+        const auto actions = s.possibleMoves();
+        if (std::none_of(actions.cbegin(), actions.cend(), [](auto x) { return x; })) {
             break;
         }
 
@@ -32,31 +37,32 @@ std::tuple<Board, int> playGame(Model *model) {
         Board s1;
 
         double bestValue = std::numeric_limits<double>::lowest();
-        for (int action : actions) {
-            auto[b, r] = s.move(action);
+        for (int i = 0; i < actions.size(); ++i) {
+            if (actions[i]) {
+                const auto&&[b, r] = s.swipe(i);
 
-            double utility = model->apply(b);
-            double value = static_cast<double>(r) + utility;
+                const double utility = model->apply(b);
+                const double value = static_cast<double>(r) + utility;
 
-            if (value >= bestValue) {
-                bestValue = value;
-                s1 = b;
-                s1_val = utility;
-                reward = r;
+                if (value >= bestValue) {
+                    bestValue = value;
+                    s1 = b;
+                    s1_val = utility;
+                    reward = r;
+                }
             }
         }
 
-        Board s2(s1);
-        s2.addRandom();
+        s = s1;  // s is s2
+        s.addRandom();
 
-        learn(model, s1_val, s1, s2);
+        learn(model, s1_val, s1, s);
 
         Ensemble* ensemble = dynamic_cast<Ensemble*>(model);
 		
 		ensemble->copyLUTs(s1.stage);
 
         score += reward;
-        s = s2;
     }
 
     return std::make_tuple(s, score);

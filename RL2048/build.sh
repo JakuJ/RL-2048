@@ -1,12 +1,12 @@
 #!/bin/bash
 set -e
 (
-  cd cmake-build-debug
-  if [ "$(uname -s)" == 'Darwin' ]; then
-    cmake -DCMAKE_CXX_COMPILER=g++-9 ..
-  else
-    cmake ..
-  fi
-  make
-  zsh -c "time ./RL2048 $1 $2 ../log.csv"
+  mkdir -p cmake-build-release
+  cd cmake-build-release
+
+  cmake -DCMAKE_CXX_COMPILER=clang++ ..
+  make -j4
+
+  mkdir -p "../tuples"
+  zsh -c "time ./RL2048 $1 $2 ../log.csv ../tuples/tuple"
 )
