@@ -16,7 +16,8 @@
 
 template<int N>
 class NTuple : public NTupleInterface {
-    constexpr static int stages = 4;
+
+    constexpr static int stages = 16;
 
     double **LUT;
 
@@ -31,7 +32,9 @@ class NTuple : public NTupleInterface {
     [[nodiscard]] int address(const Board &) const;
 
 public:
-    bool usedLUT[stages]{false, false, false, false};
+
+	// teraz usedLUT jest dwuwymiarowa i z boolami, bo patrzymy po komorce
+    bool **usedLUT;
 
     NTuple(int, std::tuple<int, int>[N]);
 
@@ -47,19 +50,19 @@ public:
 
     void update(const Board &, double) override;
 
-    void copyLUT(int stage) override;
+    // void copyLUT(int stage) override;
 };
 
 template<int N>
 NTuple<N>::NTuple(int t_m, std::tuple<int, int> ixs[N]) {
     m = t_m;
     LUT = new double *[stages];
-
+	usedLUT = new bool *[stages];
     for (int i = 0; i < stages; i++) {
         LUT[i] = new double[static_cast<int>(std::pow(m, N))]{0};
+		usedLUT[i] = new bool[static_cast<int>(std::pow(m, N))]{ false };
     }
 
-    usedLUT[0] = true;
     for (int i = 0; i < N; i++) {
         indices[i] = ixs[i];
         powers[i] = std::pow(m, i);
@@ -86,9 +89,17 @@ int NTuple<N>::address(const Board &board) const {
     return address;
 }
 
+// tutaj jest logika z przepisaniem wagi multi-stage
 template<int N>
 double NTuple<N>::apply(const Board &board) const {
-    return LUT[board.stage][address(board)];
+	int index = address(board);
+	if (usedLUT[board.stage][index] == false && board.stage > 0)
+	{
+	    // przepisanie wagi z poprzdniej tablicy
+		usedLUT[board.stage][index] = true;
+		LUT[board.stage][index] = LUT[board.stage - 1][index];
+	}
+    return LUT[board.stage][index];
 }
 
 template<int N>
@@ -96,17 +107,6 @@ void NTuple<N>::update(const Board &board, double delta) {
     int index = address(board);
 #pragma omp atomic
     LUT[board.stage][index] += delta;
-}
-
-template<int N>
-void NTuple<N>::copyLUT(int stage) {
-    if (usedLUT[stage]) {
-        return;
-    }
-    usedLUT[stage] = true;
-    for (int i = 0; i < static_cast<int>(std::pow(m, N)); i++) {
-        LUT[stage][i] = LUT[stage - 1][i];
-    }
 }
 
 template<int N>

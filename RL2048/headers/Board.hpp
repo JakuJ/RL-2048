@@ -3,13 +3,13 @@
 #include <ostream>
 #include <array>
 #include <tuple>
+#include <algorithm>
 
 class Board {
 
 public:
     static constexpr unsigned int size = 4;
     static constexpr int zero_tile{1};
-
 	int stage = 0;
 
 private:
@@ -25,6 +25,10 @@ public:
     Board() {
         matrix.fill(zero_tile);
     }
+
+	// tablica multistage
+    
+	int GetStage(int stage);
 
     // Indexing
 

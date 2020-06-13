@@ -26,6 +26,13 @@ void Board::rotateLeft() {
     }
 }
 
+// kolejne stage
+int Board::GetStage(int stage)
+{
+	const int stages[] = {4096,8192,4096,16384, 4096,8192,4096,32768, 4096,8192,4096,16384, 4096,8192,4096,65536};
+	return stage>0 && stage<10 ? stages[stage] : 15;
+}
+
 void Board::addRandom() {
     for (;;) {
         unsigned int pos = fast_rand<size * size>();
@@ -113,28 +120,8 @@ int Board::swipeUp() {
                 merged = true;
                 row++;  // skip the now zero tile
 
-                // multi-stage
-                switch (stage) {
-                    case 0:
-                        if (merged_value == 1024)
-                            stage++;
-                        break;
-                    case 1:
-                        if (merged_value == 2048)
-                            stage++;
-                        break;
-                    case 2:
-                        if (merged_value == 1024)
-                            stage++;
-                        break;
-// SEGFAULT po przejściu na stage 4
-//                    case 3:
-//                        if (merged_value == 4096)
-//                            stage++;
-//                        break;
-                    default:
-                        break;
-                }
+				if (merged_value == GetStage(stage))stage++;
+
             }
         }
     }
