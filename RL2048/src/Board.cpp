@@ -30,7 +30,7 @@ void Board::rotateLeft() {
 int Board::GetStage(int stage)
 {
 	const int stages[] = {4096,8192,4096,16384, 4096,8192,4096,32768, 4096,8192,4096,16384, 4096,8192,4096,65536};
-	return stage>0 && stage<10 ? stages[stage] : 15;
+	return stage>0 && stage<16 ? stages[stage] : 15;
 }
 
 void Board::addRandom() {
