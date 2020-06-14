@@ -3,6 +3,7 @@
 #include <ostream>
 #include <array>
 #include <tuple>
+#include <algorithm>
 
 class Board {
 
