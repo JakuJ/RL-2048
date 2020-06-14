@@ -53,16 +53,16 @@ int main(int argc, char *argv[]) {
                 scoreWriter.log(score2, max);
                 switch (max) {
                     case 2048:
-                        std::cout << GREEN "█" RESET;
+                        std::cout << "█";
                         break;
                     case 4096:
-                        std::cout << BLUE "█" RESET;
+                        std::cout << GREEN "█" RESET;
                         break;
                     case 8192:
-                        std::cout << RED "█" RESET;
+                        std::cout << BLUE "█" RESET;
                         break;
                     case 16384:
-                        std::cout << RESET "█";
+                        std::cout << RED "█" RESET;
                         break;
                     case 32768:
                         std::cout << "\n" RED "*** 32K ***" RESET "\n";
