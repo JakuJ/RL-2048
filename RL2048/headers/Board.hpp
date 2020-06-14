@@ -10,7 +10,7 @@ class Board {
 public:
     static constexpr unsigned int size = 4;
     static constexpr int zero_tile{1};
-	int stage = 0;
+    int stage = 0;
 
 private:
     std::array<int, size * size> matrix{};
@@ -26,9 +26,9 @@ public:
         matrix.fill(zero_tile);
     }
 
-	// tablica multistage
-    
-	int GetStage(int stage);
+    // tablica multistage
+
+    int getStage() const;
 
     // Indexing
 

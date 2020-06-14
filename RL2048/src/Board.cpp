@@ -27,10 +27,14 @@ void Board::rotateLeft() {
 }
 
 // kolejne stage
-int Board::GetStage(int stage)
-{
-	const int stages[] = {4096,8192,4096,16384, 4096,8192,4096,32768, 4096,8192,4096,16384, 4096,8192,4096,65536};
-	return stage>0 && stage<16 ? stages[stage] : 15;
+int Board::getStage() const {
+    const int stages[] = {
+            4096, 8192, 4096, 16384,
+            4096, 8192, 4096, 32768,
+            4096, 8192, 4096, 16384,
+            4096, 8192, 4096, 65536
+    };
+    return stage > 0 && stage < (sizeof stages) ? stages[stage] : 15;
 }
 
 void Board::addRandom() {
@@ -120,8 +124,8 @@ int Board::swipeUp() {
                 merged = true;
                 row++;  // skip the now zero tile
 
-				if (merged_value == GetStage(stage))stage++;
-
+                if (merged_value == getStage())
+                    stage++;
             }
         }
     }

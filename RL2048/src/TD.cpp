@@ -58,8 +58,6 @@ std::tuple<Board, int> playGame(Model *model) {
 
         learn(model, s1_val, s1, s);
 
-        Ensemble *ensemble = dynamic_cast<Ensemble *>(model);
-
         score += reward;
     }
 

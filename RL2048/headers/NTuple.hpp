@@ -17,8 +17,6 @@
 template<int N>
 class NTuple : public NTupleInterface {
 
-    constexpr static int stages = 16;
-
     double **LUT;
 
     std::tuple<int, int> indices[N];
@@ -32,8 +30,9 @@ class NTuple : public NTupleInterface {
     [[nodiscard]] int address(const Board &) const;
 
 public:
+    constexpr static int stages = 16;
 
-	// teraz usedLUT jest dwuwymiarowa i z boolami, bo patrzymy po komorce
+    // teraz usedLUT jest dwuwymiarowa i z boolami, bo patrzymy po komorce
     bool **usedLUT;
 
     NTuple(int, std::tuple<int, int>[N]);
@@ -57,10 +56,11 @@ template<int N>
 NTuple<N>::NTuple(int t_m, std::tuple<int, int> ixs[N]) {
     m = t_m;
     LUT = new double *[stages];
-	usedLUT = new bool *[stages];
+    usedLUT = new bool *[stages];
+
     for (int i = 0; i < stages; i++) {
         LUT[i] = new double[static_cast<int>(std::pow(m, N))]{0};
-		usedLUT[i] = new bool[static_cast<int>(std::pow(m, N))]{ false };
+        usedLUT[i] = new bool[static_cast<int>(std::pow(m, N))]{false};
     }
 
     for (int i = 0; i < N; i++) {
@@ -72,6 +72,12 @@ NTuple<N>::NTuple(int t_m, std::tuple<int, int> ixs[N]) {
 template<int N>
 NTuple<N>::NTuple(int m, std::tuple<int, int> ixs[N], double **weights): LUT(weights) {
     size = static_cast<size_t>(std::pow(m, N));
+
+    usedLUT = new bool *[stages];
+
+    for (int i = 0; i < stages; i++) {
+        usedLUT[i] = new bool[size]{false};
+    }
 
     for (int i = 0; i < N; i++) {
         indices[i] = ixs[i];
@@ -92,13 +98,12 @@ int NTuple<N>::address(const Board &board) const {
 // tutaj jest logika z przepisaniem wagi multi-stage
 template<int N>
 double NTuple<N>::apply(const Board &board) const {
-	int index = address(board);
-	if (usedLUT[board.stage][index] == false && board.stage > 0)
-	{
-	    // przepisanie wagi z poprzdniej tablicy
-		usedLUT[board.stage][index] = true;
-		LUT[board.stage][index] = LUT[board.stage - 1][index];
-	}
+    int index = address(board);
+    if (!usedLUT[board.stage][index] && board.stage > 0) {
+        // przepisanie wagi z poprzedniej tablicy
+        usedLUT[board.stage][index] = true;
+        LUT[board.stage][index] = LUT[board.stage - 1][index];
+    }
     return LUT[board.stage][index];
 }
 
@@ -113,8 +118,10 @@ template<int N>
 NTuple<N>::~NTuple() {
     for (int i = 0; i < stages; i++) {
         delete[] LUT[i];
+        delete[] usedLUT[i];
     }
     delete[] LUT;
+    delete[] usedLUT;
 }
 
 template<int N>
