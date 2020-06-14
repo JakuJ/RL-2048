@@ -21,8 +21,6 @@ public:
 
     void load_model(const std::string &path) override;
 
-	void copyLUTs(int stage);
-
 
     [[nodiscard]] double apply(const Board &board) const override;
 

@@ -51,13 +51,20 @@ std::vector<std::unique_ptr<NTupleInterface>> SymmetryExpander::expand(int m, st
 
     const auto size = static_cast<size_t>(std::pow(m, N));
 
-    auto LUT = new double *[NTuple<1>::stages];
-    for (int i = 0; i < NTuple<1>::stages; i++) {
+    const int stages = NTuple<1>::stages;
+
+    auto LUT = new double *[stages];
+    for (int i = 0; i < stages; i++) {
         LUT[i] = new double[size]{0};
     }
 
+    auto usedLUT = new bool *[stages];
+    for (int i = 0; i < stages; i++) {
+        usedLUT[i] = new bool[size]{false};
+    }
+
     for (auto &&ixs : symIndices) {
-        ret.emplace_back(new NTuple<N>(m, ixs.begin(), LUT));
+        ret.emplace_back(new NTuple<N>(m, ixs.begin(), LUT, usedLUT));
     }
     return ret;
 }

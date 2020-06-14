@@ -56,14 +56,10 @@ void Ensemble::load_model(const std::string &path) {
     }
 }
 
-void Ensemble::copyLUTs(int stage) {
-    for (auto &tuple : tuples) {
-        tuple->copyLUT(stage);
-    }
-}
-
 void Ensemble::adapt_lr(int epoch) {
-    if (epoch == 20000)
+    if (epoch == 400000) {
         learning_rate = 0.001;
+        std::cout << "Changing learning rate to " << learning_rate << std::endl;
+    }
 }
 

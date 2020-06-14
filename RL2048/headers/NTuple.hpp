@@ -37,7 +37,7 @@ public:
 
     NTuple(int, std::tuple<int, int>[N]);
 
-    NTuple(int, std::tuple<int, int>[N], double **);
+    NTuple(int, std::tuple<int, int>[N], double **, bool **);
 
     ~NTuple() override;
 
@@ -70,14 +70,9 @@ NTuple<N>::NTuple(int t_m, std::tuple<int, int> ixs[N]) {
 }
 
 template<int N>
-NTuple<N>::NTuple(int m, std::tuple<int, int> ixs[N], double **weights): LUT(weights) {
+NTuple<N>::NTuple(int m, std::tuple<int, int> ixs[N], double **weights, bool **usedLUTs)
+        : LUT(weights), usedLUT(usedLUTs) {
     size = static_cast<size_t>(std::pow(m, N));
-
-    usedLUT = new bool *[stages];
-
-    for (int i = 0; i < stages; i++) {
-        usedLUT[i] = new bool[size]{false};
-    }
 
     for (int i = 0; i < N; i++) {
         indices[i] = ixs[i];

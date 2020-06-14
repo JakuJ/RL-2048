@@ -62,7 +62,10 @@ int main(int argc, char *argv[]) {
                         std::cout << RED "█" RESET;
                         break;
                     case 16384:
-                        std::cout << "\n" RED "** 16K **" RESET "\n";
+                        std::cout << RESET "█";
+                        break;
+                    case 32768:
+                        std::cout << "\n" RED "*** 32K ***" RESET "\n";
                         break;
                     default:
                         std::cout << ' ';
