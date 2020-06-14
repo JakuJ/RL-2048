@@ -13,4 +13,6 @@ struct Model {
     virtual void load_model(const std::string &) {}
 
     [[nodiscard]] virtual double apply(const Board &) const = 0;
+
+    virtual void adapt_lr(int epoch) {}
 };

@@ -61,3 +61,9 @@ void Ensemble::copyLUTs(int stage) {
         tuple->copyLUT(stage);
     }
 }
+
+void Ensemble::adapt_lr(int epoch) {
+    if (epoch == 20000)
+        learning_rate = 0.001;
+}
+

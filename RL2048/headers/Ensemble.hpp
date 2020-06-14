@@ -6,7 +6,7 @@
 #include "NTuple.hpp"
 
 class Ensemble : public Model {
-    const double learning_rate;
+    double learning_rate;
 
     std::vector<std::unique_ptr<NTupleInterface>> tuples;
 
@@ -25,4 +25,6 @@ public:
 
 
     [[nodiscard]] double apply(const Board &board) const override;
+
+    void adapt_lr(int epoch) override;
 };
