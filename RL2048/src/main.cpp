@@ -76,6 +76,8 @@ int main(int argc, char *argv[]) {
 #pragma omp atomic
             total++;
 
+            model->adapt_lr(total);
+
             if (total % 100 == 0) {
                 std::cout << ' ' << total << " / " << epochs << '\n';
 
