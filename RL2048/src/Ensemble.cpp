@@ -53,3 +53,8 @@ void Ensemble::load_model(const std::string &path) {
         tuples[i]->load_model(path + std::to_string(i));
     }
 }
+
+void Ensemble::adapt_lr(int epoch) {
+    if (epoch == 20000)
+        learning_rate = 0.001;
+}
