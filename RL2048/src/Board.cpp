@@ -90,9 +90,8 @@ void Board::slideUp() {
             }
         }
 
-        while (count < size) {
+        while (count < size)
             at(count++, col) = zero_tile;
-        }
     }
 }
 
@@ -115,9 +114,8 @@ int Board::swipeUp() {
         }
     }
 
-    if (merged) {
+    if (merged)
         slideUp();
-    }
 
     return score;
 }
@@ -125,9 +123,8 @@ int Board::swipeUp() {
 std::tuple<Board, int> Board::swipe(int direction) const {
     Board b(*this);
 
-    for (int i = 0; i < direction; ++i) {
+    for (int i = 0; i < direction; ++i)
         b.rotateLeft();
-    }
 
     int score = b.swipeUp();
 
@@ -136,6 +133,7 @@ std::tuple<Board, int> Board::swipe(int direction) const {
             b.rotateLeft();
         }
     }
+
     return std::make_tuple(b, score);
 }
 

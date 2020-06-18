@@ -6,6 +6,8 @@
 Ensemble::Ensemble(double lr) : learning_rate(lr) {
     constexpr int m = 15;
 
+    // DEFINE TUPLES HERE
+
     std::tuple<int, int> shape[6] = {{1, 1},
                                      {1, 0},
                                      {0, 0},
@@ -13,7 +15,7 @@ Ensemble::Ensemble(double lr) : learning_rate(lr) {
                                      {0, 2},
                                      {0, 3}};
 
-    for (auto &&t: SymmetryExpander::expand<6>(m, shape))
+    for (auto &&t : SymmetryExpander::expand<6>(m, shape))
         tuples.push_back(std::move(t));
 
     std::tuple<int, int> other_shape[6] = {{2, 1},
@@ -23,7 +25,7 @@ Ensemble::Ensemble(double lr) : learning_rate(lr) {
                                            {1, 2},
                                            {1, 3}};
 
-    for (auto &&t: SymmetryExpander::expand<6>(m, other_shape))
+    for (auto &&t : SymmetryExpander::expand<6>(m, other_shape))
         tuples.push_back(std::move(t));
 
 }
@@ -55,8 +57,9 @@ void Ensemble::load_model(const std::string &path) {
 }
 
 void Ensemble::adapt_lr(int epoch) {
+    // DEFINE ADAPTIVE LR HERE
     if (epoch == 400000) {
         learning_rate = 0.001;
-        std::cout << "Changing learning rate to " << learning_rate << std::endl;
+        std::cout << "\nChanging learning rate to " << learning_rate << std::endl;
     }
 }

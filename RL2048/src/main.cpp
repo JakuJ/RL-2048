@@ -5,6 +5,7 @@
 #include "../headers/TD.hpp"
 #include "../headers/ScoreWriter.hpp"
 
+// Colours for the console output
 #define RED "\033[0;31m"
 #define GREEN "\033[0;32m"
 #define BLUE "\033[0;34m"
@@ -46,7 +47,7 @@ int main(int argc, char *argv[]) {
             const auto&&[board, score] = playGame(model.get());
 
             const int max = board.max_tile();
-            const int score2 = score; // hack
+            const int score2 = score;  // hack
 
 #pragma omp critical
             {
@@ -65,7 +66,7 @@ int main(int argc, char *argv[]) {
                         std::cout << RED "█" RESET;
                         break;
                     case 32768:
-                        std::cout << "\n" RED "*** 32K ***" RESET "\n";
+                        std::cout << "\n" RED "*** 32K ***" RESET "\n";  // also, segfault
                         break;
                     default:
                         std::cout << ' ';

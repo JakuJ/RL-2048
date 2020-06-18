@@ -1,8 +1,10 @@
 #include "../headers/TD.hpp"
 
+#include <numeric>
+
 static void learn(Model *model, double s1Val, const Board &s1, const Board &s2) {
     const auto actions = s2.possibleMoves();
-    if (std::none_of(actions.cbegin(), actions.cend(), [](auto x) { return x; })) {
+    if (std::accumulate(actions.cbegin(), actions.cend(), 0) == 0) {
         model->update(s1, -s1Val);
     } else {
         double bestValue = std::numeric_limits<double>::lowest();
@@ -27,7 +29,7 @@ std::tuple<Board, int> playGame(Model *model) {
 
     for (;;) {
         const auto actions = s.possibleMoves();
-        if (std::none_of(actions.cbegin(), actions.cend(), [](auto x) { return x; })) {
+        if (std::accumulate(actions.cbegin(), actions.cend(), 0) == 0) {
             break;
         }
 

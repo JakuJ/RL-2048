@@ -35,10 +35,6 @@ public:
         return matrix[row * size + column];
     }
 
-    [[nodiscard]] int max_tile() const {
-        return *std::max_element(matrix.cbegin(), matrix.cend());
-    }
-
     // Actions
 
     [[nodiscard]] std::tuple<Board, int> swipe(int) const;
@@ -46,6 +42,12 @@ public:
     [[nodiscard]] std::array<bool, 4> possibleMoves() const;
 
     void addRandom();
+
+    [[nodiscard]] int max_tile() const {
+        return *std::max_element(matrix.cbegin(), matrix.cend());
+    }
+
+    // Other
 
     friend std::ostream &operator<<(std::ostream &os, const Board &board);
 };
