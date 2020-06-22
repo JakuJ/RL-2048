@@ -1,10 +1,8 @@
 .DS_Store
-node_modules/
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
 __pycache__/
 cmake-build-debug
+cmake-build-release
+build_dir/
 
 # Editor directories and files
 .idea
@@ -12,7 +10,6 @@ cmake-build-debug
 *.ntvs*
 *.njsproj
 *.sln
-
 
 CMakeLists.txt.user
 CMakeCache.txt
@@ -28,8 +25,5 @@ _deps
 
 .vscode
 
-RL2048/RL2048
-RL2048/tuples/
+tuples/
 *.csv
-RL2048/cmake-build-release
-RL2048/wykres.py

@@ -5,6 +5,8 @@
 #include "../headers/TD.hpp"
 #include "../headers/ScoreWriter.hpp"
 
+#define SAVE_MODEL 0
+
 // Colours for the console output
 #define RED "\033[0;31m"
 #define GREEN "\033[0;32m"
@@ -29,7 +31,7 @@ int main(int argc, char *argv[]) {
     std::cout << "Available threads: " << omp_get_max_threads() << std::endl;
 
     // Initialize the model
-    std::unique_ptr<Model> model = std::make_unique<Ensemble>(learning_rate);
+    std::unique_ptr <Model> model = std::make_unique<Ensemble>(learning_rate);
     ScoreWriter scoreWriter(filename);
 
     // Train the model
@@ -85,7 +87,9 @@ int main(int argc, char *argv[]) {
         }
     }
 
+#if SAVE_MODEL
     model->save_model(save_prefix);
+#endif
 
     return EXIT_SUCCESS;
 }
