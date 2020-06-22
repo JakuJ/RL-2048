@@ -4,10 +4,22 @@
 #include <numeric>
 
 Ensemble::Ensemble(double lr) : learning_rate(lr) {
-    constexpr int m = 15;
+    constexpr static int m = 15;
 
-    // DEFINE TUPLES HERE
+    /*  Prepare a shape:
+        std::tuple<int, int> shape[4] = {{0, 0},
+                                         {0, 1},
+                                         {1, 1},
+                                         {1, 0}};
+     *  Add a standard tuple:
+        tuples.emplace_back(new NTuple<4>(m, shape));
 
+     *  Or one with symmetry expansion:
+        for (auto &&t : SymmetryExpander::expand<4>(m, shape))
+            tuples.push_back(std::move(t));
+     */
+
+    // Cyfra '6'
     std::tuple<int, int> shape[6] = {{1, 1},
                                      {1, 0},
                                      {0, 0},
@@ -18,6 +30,7 @@ Ensemble::Ensemble(double lr) : learning_rate(lr) {
     for (auto &&t : SymmetryExpander::expand<6>(m, shape))
         tuples.push_back(std::move(t));
 
+    // Cyfra '6', przesunięta
     std::tuple<int, int> other_shape[6] = {{2, 1},
                                            {2, 0},
                                            {1, 0},
@@ -27,7 +40,6 @@ Ensemble::Ensemble(double lr) : learning_rate(lr) {
 
     for (auto &&t : SymmetryExpander::expand<6>(m, other_shape))
         tuples.push_back(std::move(t));
-
 }
 
 double Ensemble::apply(const Board &board) const {

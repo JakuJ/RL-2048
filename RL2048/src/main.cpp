@@ -66,7 +66,7 @@ int main(int argc, char *argv[]) {
                         std::cout << RED "█" RESET;
                         break;
                     case 32768:
-                        std::cout << "\n" RED "*** 32K ***" RESET "\n";  // also, segfault
+                        std::cout << "\n" RED "*** 32K ***" RESET "\n";  // also, segfault :)
                         break;
                     default:
                         std::cout << ' ';
@@ -84,6 +84,8 @@ int main(int argc, char *argv[]) {
             }
         }
     }
+
+    model->save_model(save_prefix);
 
     return EXIT_SUCCESS;
 }
