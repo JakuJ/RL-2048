@@ -20,7 +20,7 @@ Wymagane narzędzia:
 
 Projekt testowany był z wykorzystaniem kompilatora `clang` w wersji 10.0.
 
-W celu uproszczenia budowania i uruchamiania programu przygotowano skrypt `build.sh`. Jako argumenty przyjmuje odpowiednio liczbę gier (iteracji treningu) oraz początkową stałą uczenia. Skrypt buduje (lub przebudowuje w zależności od zmian) program w folderze `build_dir`, a następnie uruchamia go dla podanych parametrów.
+W celu uproszczenia budowania i uruchamiania programu przygotowano skrypt `build.sh`. Domyślnie kompilatora `clang`. Jako argumenty przyjmuje odpowiednio liczbę gier (iteracji treningu) oraz początkową stałą uczenia. Skrypt buduje (lub przebudowuje w zależności od zmian) program w folderze `build_dir`, a następnie uruchamia go dla podanych parametrów.
 
 Ręczna kompilacja może być wykonana przy użyciu narzędzia CMake. Zalecamy budowanie w osobnym katalogu:
 
